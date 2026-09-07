@@ -9,9 +9,13 @@ export default defineConfig({
     setupFiles: './vitest.setup.ts',
     // Exclude E2E tests (Playwright tests)
     exclude: ['**/node_modules/**', '**/e2e/**'],
-    // Aggressive performance optimizations - maximize parallel execution
     pool: 'forks',
-    maxWorkers: 8, // Run up to 8 test files in parallel
+    // Four, not "as many as possible". Each fork carries its own jsdom, so
+    // oversubscribing thrashes: on a 12-core machine 8 workers ran the suite in
+    // 4m59 and failed 0-6 tests at random (always timeouts, always green when
+    // re-run alone), while 4 workers ran it in 2m21 with nothing failing.
+    // Raise this only with timings to back it up.
+    maxWorkers: 4,
     isolate: true, // Keep isolation to prevent test failures
     // Reduce overhead
     deps: {

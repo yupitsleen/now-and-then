@@ -50,7 +50,7 @@ src/
 ├── pages/          # DashboardPage, Timeline, DataPage, AboutPage, DonatePage,
 │   └── resources/  # Education, Legal, Media, Organizations, Research, Trackers
 ├── hooks/          # useAppState, useFilteredSites, useWaybackReleases,
-│                   #   useSitesPaginated, useSitesQuery, useDebounce, ...
+│                   #   useSitesQuery, useTimelineData, useDebounce, ...
 ├── contexts/       # Animation, Calendar (Gregorian/Islamic), Locale, Theme
 ├── config/         # colorThemes, data.config, wayback, filters, animation
 ├── constants/      # layout (BREAKPOINTS, Z_INDEX), timeline, map, statistics
@@ -66,7 +66,7 @@ server/             # Express backend: controllers/ → services/ → repositori
 
 ### State
 
-Centralized in `useAppState()` (no Redux). `useFilteredSites` for memoized filtering, `useSitesPaginated` for paging, `useSitesQuery` for React Query caching.
+Centralized in `useAppState()` (no Redux). `useFilteredSites` for memoized filtering, `useSitesQuery` for React Query caching.
 
 ### Backend Modes (env vars only, zero code changes)
 
