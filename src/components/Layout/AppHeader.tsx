@@ -43,7 +43,7 @@ export function AppHeader({
             never covers the toggle button or eats its clicks. */}
         <button
           onClick={() => navigate("/")}
-          className="absolute inset-y-0 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#fefefe]"
+          className="absolute inset-y-0 flex items-center gap-3 cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#fefefe]"
           style={{ left: titleLeft ?? 48 }}
           aria-label="Go to home page"
         >
