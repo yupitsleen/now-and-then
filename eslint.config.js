@@ -6,7 +6,8 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'coverage']),
+  // .remember is the remember plugin's scratch space, not source we own.
+  globalIgnores(['dist', 'coverage', '.remember']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
