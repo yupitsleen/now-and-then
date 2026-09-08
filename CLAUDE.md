@@ -21,17 +21,23 @@ npm run test:ui         # Vitest UI
 npm run test:coverage   # Coverage report → coverage/index.html (80% thresholds)
 npm run e2e             # Playwright e2e (chromium, headless); :ui :headed :debug :report variants
 npm run lint            # ESLint (zero warnings allowed)
+npm run test:links      # Live-check every source URL in mockSites.ts (network; monthly in CI)
 npm run build           # tsc -b && vite build → dist/
 ```
 
 Unit tests for a subset: `npx vitest --run src/hooks` (never `npm test <path>` — extra args land on playwright).
+Only what your edit affects: `npx vitest --run --changed HEAD` — walks the module graph from the files
+modified against HEAD, so timeline work doesn't re-run the Resources page tests.
 
 ---
 
 ## Critical Rules
 
 - Conventional commits: `feat:` `fix:` `refactor:` `perf:` etc.
-- Before commit: all tests pass, lint clean, dev server runs. (A PreToolUse hook runs unit tests on `git commit` automatically.)
+- Before commit: all tests pass, lint clean, dev server runs. A PreToolUse hook runs the unit tests
+  affected by the commit (`vitest run --changed HEAD`) and blocks on failure. It lives in `.claude/`,
+  which is gitignored — the hook is per-machine, so don't rely on a teammate having it. CI
+  (`.github/workflows/pr-checks.yml`) runs the full suite; that's the real gate.
 - TypeScript strict mode, no `any`, explicit return types.
 - Search `src/components/`, `src/hooks/`, `src/utils/` for existing code before writing new.
 
@@ -149,6 +155,7 @@ interface Site {
 | FilterBar laggy/not updating | 300ms debounce is intentional |
 | Docker won't start | Docker Desktop running? Port 5432 free? |
 | Backend connection fails | Check `.env.development` mode flags |
+| Link Check action red | Only 404/5xx and network failures that survive a retry are real. 403/429 are bot-blocking and rate-limiting — tolerated, verify in a browser. |
 
 ---
 
