@@ -79,10 +79,10 @@ export const Z_INDEX = {
  */
 export const TABLE_CONFIG = {
   /** Width of the Type column (icon display) in pixels */
-  TYPE_COLUMN_WIDTH: 60,
+  TYPE_COLUMN_WIDTH: 20,
 
   /** Default initial width for resizable table (Type and Site Name only) */
-  DEFAULT_TABLE_WIDTH: 280,
+  DEFAULT_TABLE_WIDTH: 210,
 
   /** Minimum width for resizable table (Type and Site Name visible) */
   MIN_TABLE_WIDTH: 200,

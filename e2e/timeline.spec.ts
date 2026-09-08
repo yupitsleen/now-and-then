@@ -37,7 +37,8 @@ test.describe('Timeline Page - Integration', () => {
 
     // The expand button lives in the sidebar's Sites tab, which starts collapsed.
     // Scope to the sidebar: the timeline has its own Sites tab.
-    await page.getByRole('button', { name: /show filters/i }).click();
+    const showFilters = page.getByRole('button', { name: /show filters/i });
+    if (await showFilters.isVisible()) await showFilters.click();
     const sidebar = page.getByRole('complementary', { name: /filters/i });
     await sidebar.getByRole('tab', { name: /^sites$/i }).click();
     await sidebar.getByRole('button', { name: /expand/i }).first().click();

@@ -24,6 +24,14 @@ import { cn } from "../../styles/theme";
 import { useThemeClasses } from "../../hooks/useThemeClasses";
 import { TOOLTIPS } from "../../config/tooltips";
 
+/** Sidebar tab glyphs: list, funnel, cog (heroicons outline). */
+const TAB_ICON_PATHS: Record<"sites" | "filters" | "settings", string> = {
+  sites: "M4 6h16M4 12h16M4 18h16",
+  filters: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 12.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-4.586L3.293 6.707A1 1 0 013 6V4z",
+  settings:
+    "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z",
+};
+
 interface FilterBarProps {
   filters: FilterState;
   onFilterChange: (updates: Partial<FilterState>) => void;
@@ -353,7 +361,8 @@ export const FilterBar = memo(function FilterBar({
   // Shared render fragments — identical across variants, so search and the whole
   // mobile experience are defined once.
   const searchBox = (
-    <div className="relative flex-shrink-0 w-full sm:w-auto sm:min-w-[200px]">
+    // min() so the 200px floor never exceeds a narrow sidebar's width.
+    <div className="relative flex-shrink-0 w-full sm:w-auto sm:min-w-[min(200px,100%)]">
       <Input
         type="text"
         value={searchInputValue}
@@ -535,7 +544,7 @@ export const FilterBar = memo(function FilterBar({
           <aside
             className={cn(
               "hidden md:flex md:flex-col md:flex-shrink-0 overflow-hidden backdrop-blur-sm border rounded shadow-lg relative z-10 transition-colors duration-200",
-              !resize && "md:w-64",
+              !resize && "md:w-48",
               t.border.primary,
               isDark ? "bg-[#000000]/95" : "bg-white/95"
             )}
@@ -557,14 +566,18 @@ export const FilterBar = memo(function FilterBar({
                       aria-selected={activeTab === tab}
                       aria-controls={`filter-sidebar-panel-${tab}`}
                       onClick={() => setSidebarTab(tab)}
+                      title={translate(`filters.${tab}`)}
                       className={cn(
-                        "px-2 py-1 text-sm font-bold rounded-t border-b-2 transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none",
+                        "px-2 py-1 rounded-t border-b-2 transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none",
                         activeTab === tab
                           ? cn("border-[#009639]", t.text.heading)
                           : cn("border-transparent", t.text.muted, t.bg.hover)
                       )}
                     >
-                      {translate(`filters.${tab}`)}
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={TAB_ICON_PATHS[tab]} />
+                      </svg>
+                      <span className="sr-only">{translate(`filters.${tab}`)}</span>
                     </button>
                   ))}
                 </div>

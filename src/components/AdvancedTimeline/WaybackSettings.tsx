@@ -176,15 +176,15 @@ export function WaybackSettings({
           )}
 
           {/* Same shape as IntervalSelector so the settings tab reads as one list. */}
-          <div className="flex items-center gap-2">
-            <label htmlFor="language-selector" className={`text-xs ${t.text.primary}`}>
+          <div className="flex items-center gap-2 min-w-0">
+            <label htmlFor="language-selector" className={`text-xs flex-shrink-0 ${t.text.primary}`}>
               {translate("timeline.language")}:
             </label>
             <select
               id="language-selector"
               value={locale}
               onChange={(e) => setLocale(e.target.value as LocaleCode)}
-              className={`text-xs px-2 py-1 rounded border cursor-pointer transition-all duration-200 ${t.border.primary} ${t.bg.primary} ${t.text.primary}`}
+              className={`text-xs px-2 py-1 rounded border cursor-pointer transition-all duration-200 min-w-0 flex-1 ${t.border.primary} ${t.bg.primary} ${t.text.primary}`}
             >
               {getAllLocales().map((loc) => (
                 <option key={loc.code} value={loc.code}>

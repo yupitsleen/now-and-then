@@ -36,7 +36,7 @@ export function SitesTableMobile({ sites }: SitesTableMobileProps) {
   const isRTL = localeConfig.direction === "rtl";
 
   // Sort logic (shared with Desktop variant via hook)
-  const { sortField, sortDirection, handleSort, sortedSites } = useTableSort<Site>(sites, "dateDestroyed", "desc");
+  const { sortField, sortDirection, handleSort, sortedSites } = useTableSort<Site>(sites, "dateDestroyed", "asc");
 
   // Mobile-specific state
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);

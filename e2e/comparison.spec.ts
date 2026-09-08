@@ -20,7 +20,7 @@ test.describe('Comparison Mode - Critical Workflows', () => {
     await page.waitForLoadState('networkidle');
 
     // Page should load successfully
-    await expect(page).toHaveTitle(/now & then/i);
+    await expect(page).toHaveTitle(/then & now/i);
 
     // Map should be visible (Timeline page always shows map)
     const map = page.locator('.leaflet-container').first();

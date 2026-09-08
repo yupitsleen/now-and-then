@@ -30,11 +30,14 @@ export function TableHeader({
       <tr>
         {visibleColumns.has("type") && (
           <th
-            className={`${COMPACT_TABLE.headerX} ${COMPACT_TABLE.headerY} ${COMPACT_TABLE.headerText} cursor-pointer select-none text-center transition-colors duration-200 hover:bg-gray-700/30`}
+            className={`px-0.5 ${COMPACT_TABLE.headerY} ${COMPACT_TABLE.headerText} cursor-pointer select-none text-center transition-colors duration-200 hover:bg-gray-700/30`}
             onClick={() => onSort("type")}
             style={{ width: `${TABLE_CONFIG.TYPE_COLUMN_WIDTH}px` }}
+            title={translate("table.type")}
           >
-            {translate("table.type")}
+            {/* Label is sr-only: the word "Type" is what kept this icon-only
+                column from shrinking. */}
+            <span className="sr-only">{translate("table.type")}</span>
             <SortIcon field="type" currentField={sortField} direction={sortDirection} />
           </th>
         )}

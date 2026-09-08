@@ -44,10 +44,10 @@ export function IntervalSelector({
   const selectedTooltip = selected ? translate(selected.tooltipKey) : undefined;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 min-w-0">
       <label
         htmlFor="interval-selector"
-        className={`text-xs ${isEnabled ? t.text.primary : t.text.muted}`}
+        className={`text-xs flex-shrink-0 ${isEnabled ? t.text.primary : t.text.muted}`}
       >
         {translate("timeline.interval")}:
       </label>
@@ -57,7 +57,7 @@ export function IntervalSelector({
         onChange={(e) => onChange(e.target.value as ComparisonInterval)}
         disabled={!isEnabled}
         className={`
-          text-xs px-2 py-1 rounded border
+          text-xs px-2 py-1 rounded border min-w-0 flex-1
           ${isEnabled ? t.border.primary : t.border.muted}
           ${isEnabled ? t.bg.primary : t.bg.disabled}
           ${isEnabled ? t.text.primary : t.text.muted}

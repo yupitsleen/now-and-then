@@ -10,8 +10,8 @@ interface TimelineNavigationProps {
 /**
  * Single timeline event navigation button (Advanced Timeline mode)
  *
- * Rendered twice by TimelineScrubber: Previous at the far left of the control
- * row, Next at the far right. Symbol only.
+ * Rendered twice by TimelineScrubber, side by side at the end of the transport
+ * group. Symbol only.
  */
 export function TimelineNavigation({ direction, disabled, onClick }: TimelineNavigationProps) {
   const translate = useTranslation();

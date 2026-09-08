@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import userEvent from "@testing-library/user-event";
+import { fireEvent } from "@testing-library/react";
 import { renderWithTheme, screen } from "../../test-utils/renderWithTheme";
 import { ReleaseDatePicker } from "./ReleaseDatePicker";
 import type { WaybackRelease } from "../../services/waybackService";
@@ -30,37 +30,23 @@ describe("ReleaseDatePicker", () => {
   it("shows the release date of each slider position", () => {
     setup();
 
-    expect(screen.getByRole("button", { name: /before imagery/i })).toHaveTextContent(
-      "2019-06-05"
-    );
-    expect(screen.getByRole("button", { name: /after imagery/i })).toHaveTextContent(
-      "2024-01-17"
-    );
+    expect(screen.getByLabelText(/before imagery/i)).toHaveValue("2019-06-05");
+    expect(screen.getByLabelText(/after imagery/i)).toHaveValue("2024-01-17");
   });
 
   it("disables both fields when the map version is synced", () => {
     setup(true);
 
-    expect(screen.getByRole("button", { name: /before imagery/i })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /after imagery/i })).toBeDisabled();
+    expect(screen.getByLabelText(/before imagery/i)).toBeDisabled();
+    expect(screen.getByLabelText(/after imagery/i)).toBeDisabled();
   });
 
-  it("only enables days that have a Wayback release", async () => {
-    const user = userEvent.setup();
-    setup();
-
-    await user.click(screen.getByRole("button", { name: /before imagery/i }));
-
-    expect(screen.getByRole("button", { name: /june 5th, 2019/i })).toBeEnabled();
-    expect(screen.getByRole("button", { name: /june 6th, 2019/i })).toBeDisabled();
-  });
-
-  it("selects the release for the clicked day", async () => {
-    const user = userEvent.setup();
+  it("snaps an entered date to the nearest release", () => {
     const { onBeforeChange } = setup();
 
-    await user.click(screen.getByRole("button", { name: /before imagery/i }));
-    await user.click(screen.getByRole("button", { name: /june 20th, 2019/i }));
+    fireEvent.change(screen.getByLabelText(/before imagery/i), {
+      target: { value: "2019-06-18" },
+    });
 
     expect(onBeforeChange).toHaveBeenCalledWith(1);
   });

@@ -221,7 +221,7 @@ describe("FilterBar — sidebar variant", () => {
     const { user } = setupCollapsible();
     expect(screen.getByRole("heading", { name: /^type$/i })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /hide filters/i }));
+    await user.click(screen.getByRole("button", { name: /^hide$/i }));
     expect(screen.queryByRole("heading", { name: /^type$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /show filters/i })).not.toBeInTheDocument();
   });
@@ -269,7 +269,7 @@ describe("FilterBar — sites tab", () => {
     const { onSidebarCollapsedChange, user } = setupCollapsible();
     expect(onSidebarCollapsedChange).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: /hide filters/i }));
+    await user.click(screen.getByRole("button", { name: /^hide$/i }));
     expect(onSidebarCollapsedChange).toHaveBeenLastCalledWith(true);
   });
 });

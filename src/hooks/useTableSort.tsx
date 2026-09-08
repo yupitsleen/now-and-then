@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
+import { getEffectiveDestructionDate } from "../utils/format";
 
 export type SortDirection = "asc" | "desc";
 
@@ -60,8 +61,12 @@ export function useTableSort<T extends Record<string, any>>(
    */
   const sortedData = useMemo(() => {
     return [...data].sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
+      // Sorting on destruction date uses the same effective date the timeline does
+      // (dateDestroyed ?? sourceAssessmentDate), so the table order matches the
+      // order the timeline's Previous/Next buttons walk through.
+      const useEffectiveDate = sortField === "dateDestroyed";
+      const aValue = useEffectiveDate ? getEffectiveDestructionDate(a) : a[sortField];
+      const bValue = useEffectiveDate ? getEffectiveDestructionDate(b) : b[sortField];
 
       // Handle null/undefined values
       if (aValue == null && bValue == null) return 0;

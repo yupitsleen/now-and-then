@@ -384,10 +384,10 @@ export function TimelineScrubber({
     >
       {/* Controls sit above the track so the track keeps the full card width */}
       {/* dir="ltr" keeps media controls left-to-right regardless of language */}
-      {/* min-h fits the two-line centred caption, which is absolute and would
-          otherwise hang over the track */}
-      <div className="relative flex min-h-[2.25rem] items-center justify-between gap-2" dir="ltr">
-        {/* Left: Reset/Play/Pause/Sync Map/Speed controls then Previous */}
+      {/* min-h holds the row steady whether the caption wraps to one line or two */}
+      <div className="flex min-h-[2.25rem] items-center gap-4" dir="ltr">
+        {/* Transport: reset, play/pause, then step back/forward — one group, so
+            stepping through events doesn't send the pointer across the card */}
         {/* ponytail: indent past the tab strip the Timeline page overlays on this
             corner; plain padding beats plumbing a `tabbed` prop down two levels */}
         <div className="flex items-center gap-2 flex-wrap shrink-0 [.timeline-tabbed_&]:pl-28">
@@ -410,44 +410,43 @@ export function TimelineScrubber({
             onSyncMapToggle={advancedMode?.onSyncMapToggle}
           />
           {showNavigation && (
-            <TimelineNavigation
-              direction="previous"
-              disabled={!canGoPrevious}
-              onClick={goToPreviousEvent}
-            />
+            <>
+              <TimelineNavigation
+                direction="previous"
+                disabled={!canGoPrevious}
+                onClick={goToPreviousEvent}
+              />
+              <TimelineNavigation direction="next" disabled={!canGoNext} onClick={goToNextEvent} />
+            </>
           )}
         </div>
 
+        {/* The card's label, reading after the controls it belongs to. */}
         {/* ponytail: theme text, not literal white — the card is white in light mode */}
-        {/* Absolute so it centres on the card, not on the gap between the two clusters */}
-        <div className="absolute inset-x-0 mx-auto w-fit max-w-full px-2 pointer-events-none text-center">
+        <div className="min-w-0 flex-1">
           <p className={`truncate text-sm font-semibold leading-tight ${t.text.heading}`}>
             Timeline of destructive assaults on culturally significant sites
           </p>
-          <p className="text-xs font-medium text-[#009639] leading-tight">
+          {/* Muted, not flag green: green means "before/intact" on the maps and
+              the dots, and an instruction shouldn't borrow that meaning */}
+          <p className={`truncate text-xs leading-tight ${t.text.muted}`}>
             {comparisonMode
               ? "Click on a site dot to see a before-and-after view of Israel's genocidal destruction"
               : "Click on a site dot to see what remains after Israel's genocidal destruction"}
           </p>
         </div>
 
-        {/* Right: Next + info icon */}
-        <div className="flex items-center gap-2 shrink-0">
-          {showNavigation && (
-            <TimelineNavigation direction="next" disabled={!canGoNext} onClick={goToNextEvent} />
-          )}
-          <InfoIcon
-            title={advancedMode
-              ? translate("timeline.tooltipAdvanced")
-              : translate("timeline.tooltipDefault")
-            }
-            aria-label={advancedMode
-              ? translate("timeline.tooltipAdvanced")
-              : translate("timeline.tooltipDefault")
-            }
-            className={`w-4 h-4 ${INFO_ICON_COLORS.DEFAULT} ${INFO_ICON_COLORS.HOVER} transition-colors cursor-help`}
-          />
-        </div>
+        <InfoIcon
+          title={advancedMode
+            ? translate("timeline.tooltipAdvanced")
+            : translate("timeline.tooltipDefault")
+          }
+          aria-label={advancedMode
+            ? translate("timeline.tooltipAdvanced")
+            : translate("timeline.tooltipDefault")
+          }
+          className={`shrink-0 w-4 h-4 ${INFO_ICON_COLORS.DEFAULT} ${INFO_ICON_COLORS.HOVER} transition-colors cursor-help`}
+        />
       </div>
 
       {/* The timeline track - full card width */}

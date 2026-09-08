@@ -16,13 +16,16 @@ import { test, expect } from "@playwright/test";
  * the Filters tab.
  */
 
-/** Expand the sidebar (it loads collapsed to a rail) and return its locator. */
+/** Ensure the sidebar is expanded and return its locator. */
 async function openSidebar(page: import("@playwright/test").Page) {
   const sidebar = page.getByRole("complementary", { name: /filters/i });
-  // Collapsed, the sidebar renders nothing — the re-open button lives in the header.
+  // Whether it loads railed or open is a design choice; either way, end up open.
+  // Railed, the sidebar renders nothing — the re-open button lives in the header.
+  await expect(sidebar.or(page.getByRole("button", { name: /show filters/i })).first())
+    .toBeVisible({ timeout: 30000 });
   const show = page.getByRole("button", { name: /show filters/i });
-  await expect(show).toBeVisible({ timeout: 30000 });
-  await show.click();
+  if (await show.isVisible()) await show.click();
+  await expect(sidebar).toBeVisible({ timeout: 30000 });
   return sidebar;
 }
 

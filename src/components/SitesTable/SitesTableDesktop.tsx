@@ -72,7 +72,8 @@ export function SitesTableDesktop({
   const [showIslamicDates, setShowIslamicDates] = useState(false);
 
   // Sort logic
-  const { sortField, sortDirection, handleSort, sortedSites } = useTableSort<Site>(sites, "dateDestroyed", "desc");
+  // Ascending mirrors the timeline: Next walks forward in time, down the table.
+  const { sortField, sortDirection, handleSort, sortedSites } = useTableSort<Site>(sites, "dateDestroyed", "asc");
 
   // Scroll to highlighted row
   const { tableContainerRef, highlightedRowRef } = useTableScroll(highlightedSiteId);

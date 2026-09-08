@@ -63,7 +63,7 @@ export function TableRow({
       }}
     >
       {visibleColumns.has("type") && (
-        <td className={`${COMPACT_TABLE.cellX} ${COMPACT_TABLE.cellY} text-center`}>
+        <td className={`px-0.5 ${COMPACT_TABLE.cellY} text-center`}>
           {onSiteTypeClick || onSiteClick ? (
             <button
               onClick={(e) => {
@@ -74,11 +74,11 @@ export function TableRow({
               title={getSiteTypeLabel(site.type)}
               aria-label={`${getSiteTypeLabel(site.type)} - ${primary}`}
             >
-              <SiteTypeIcon type={site.type} className={`w-6 h-6 ${t.text.body}`} />
+              <SiteTypeIcon type={site.type} className={`w-3 h-3 ${t.text.body}`} />
             </button>
           ) : (
             <span className="inline-flex items-center justify-center" title={getSiteTypeLabel(site.type)}>
-              <SiteTypeIcon type={site.type} className={`w-6 h-6 ${t.text.body}`} />
+              <SiteTypeIcon type={site.type} className={`w-3 h-3 ${t.text.body}`} />
             </span>
           )}
         </td>

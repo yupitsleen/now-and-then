@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { TimelineScrubber } from "../components/Timeline/TimelineScrubber";
 import { AnimationProvider } from "../contexts/AnimationContext";
 import type { Site } from "../types";
+import { TIMELINE_CONFIG } from "../constants/timeline";
 
 // Mock ResizeObserver for jsdom environment
 global.ResizeObserver = class ResizeObserver {
@@ -369,7 +370,9 @@ describe("TimelineScrubber", () => {
 
       // Get all SVGs and find the timeline SVG (not the InfoIcon SVG)
       const svgs = container.querySelectorAll("svg");
-      const timelineSvg = Array.from(svgs).find((svg) => svg.getAttribute("height") === "40");
+      const timelineSvg = Array.from(svgs).find(
+        (svg) => svg.getAttribute("height") === String(TIMELINE_CONFIG.HEIGHT)
+      );
       expect(timelineSvg).toBeInTheDocument();
       // Timeline SVG should have aria-hidden for accessibility
       expect(timelineSvg).toHaveAttribute("aria-hidden", "true");

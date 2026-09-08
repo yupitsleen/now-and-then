@@ -140,7 +140,7 @@ export function Timeline() {
   // Full-screen sites table (same expanded variant the Data page uses)
   const [tableExpanded, setTableExpanded] = useState(false);
   // Owned here, not in FilterBar: the expanded table lays out around the rail.
-  const [sidebarRailed, setSidebarRailed] = useState(true);
+  const [sidebarRailed, setSidebarRailed] = useState(false);
   // Railed leaves no rail behind — the re-open button lives in the header.
   const sidebarWidth = sidebarRailed ? 0 : tableResize.tableWidth;
   // The expanded table is a region, not a dialog — the filter sidebar stays live
@@ -339,6 +339,9 @@ export function Timeline() {
 
       {/* Header - shared across all pages */}
       <AppHeader
+        // Lockup parks at the green map's left edge with the panel open, and stays
+        // there when it rails — so railing doesn't slide it onto the toggle.
+        titleLeft={16 + tableResize.tableWidth + 8}
         leading={
           sidebarRailed ? (
             <FiltersToggleButton
@@ -477,6 +480,12 @@ export function Timeline() {
                       dateLabel: currentRelease?.releaseDate,
                     }}
                     onSiteClick={setSelectedSite}
+                    onBeforeDateChange={(date) =>
+                      setBeforeReleaseIndex(findClosestReleaseIndex(releases, new Date(date)))
+                    }
+                    onAfterDateChange={(date) =>
+                      setCurrentReleaseIndex(findClosestReleaseIndex(releases, new Date(date)))
+                    }
                     beforeMapSettings={{
                       zoomToSite: beforeMapZoomToSite,
                       onZoomToSiteChange: setBeforeMapZoomToSite,
@@ -517,6 +526,9 @@ export function Timeline() {
                     customTileUrl={currentRelease?.tileUrl}
                     customMaxZoom={currentRelease?.maxZoom}
                     dateLabel={currentRelease?.releaseDate}
+                    onDateLabelChange={(date) =>
+                      setCurrentReleaseIndex(findClosestReleaseIndex(releases, new Date(date)))
+                    }
                     onSiteClick={setSelectedSite}
                     comparisonModeActive={false}
                     zoomToSiteOverride={singleMapZoomToSite}

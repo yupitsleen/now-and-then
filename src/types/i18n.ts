@@ -141,6 +141,7 @@ export interface Translations {
     jump: string;
     tooltipDefault: string;
     tooltipAdvanced: string;
+    tooltipImagery: string;
     interval: string;
     intervalAsLargeAsPossible: string;
     intervalAsLargeAsPossibleTooltip: string;

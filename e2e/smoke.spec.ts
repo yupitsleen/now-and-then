@@ -13,7 +13,7 @@ test.describe('Smoke Tests - Core Pages', () => {
     await page.waitForLoadState('networkidle');
 
     // Check for key elements
-    await expect(page).toHaveTitle(/now & then/i);
+    await expect(page).toHaveTitle(/then & now/i);
 
     // Map should be visible
     const map = page.locator('.leaflet-container').first();
@@ -33,9 +33,9 @@ test.describe('Smoke Tests - Navigation', () => {
     await page.waitForLoadState('networkidle');
 
     await page.goBack();
-    await page.waitForLoadState('networkidle');
 
-    expect(page.url()).not.toContain('/data');
+    // toHaveURL retries — under parallel load networkidle can settle before the nav does.
+    await expect(page).not.toHaveURL(/\/data/);
   });
 });
 

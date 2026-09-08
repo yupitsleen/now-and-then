@@ -82,7 +82,7 @@ export function SiteTableRow({
         </td>
       )}
       {isColumnVisible("type") && (
-        <td className={`${t.table.td} text-center`}>
+        <td className="px-1 py-3 text-center">
           {/* Only a control when it actually does something — otherwise a plain
               icon, so keyboard users never land on a no-op button. */}
           {onSiteTypeClick || onSiteClick ? (
@@ -95,11 +95,11 @@ export function SiteTableRow({
               title={getSiteTypeLabel(site.type)}
               aria-label={`${getSiteTypeLabel(site.type)} - ${site.name}`}
             >
-              <SiteTypeIcon type={site.type} className={`w-6 h-6 ${t.text.body}`} />
+              <SiteTypeIcon type={site.type} className={`w-3 h-3 ${t.text.body}`} />
             </button>
           ) : (
             <span className="inline-flex items-center justify-center" title={getSiteTypeLabel(site.type)}>
-              <SiteTypeIcon type={site.type} className={`w-6 h-6 ${t.text.body}`} />
+              <SiteTypeIcon type={site.type} className={`w-3 h-3 ${t.text.body}`} />
             </span>
           )}
         </td>

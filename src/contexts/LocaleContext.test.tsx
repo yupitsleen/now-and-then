@@ -218,7 +218,7 @@ describe("useTranslation", () => {
       </LocaleProvider>
     );
 
-    expect(screen.getByTestId("title").textContent).toBe("Now & Then");
+    expect(screen.getByTestId("title").textContent).toBe("Then & Now");
     expect(screen.getByTestId("loading").textContent).toBe("Loading...");
   });
 });

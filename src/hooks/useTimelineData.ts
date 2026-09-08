@@ -21,12 +21,17 @@ export function useTimelineData(sites: Site[]) {
         return !!getEffectiveDestructionDate(site);
       })
       .map((site) => {
-        const effectiveDate = getEffectiveDestructionDate(site);
+        const effectiveDate = getEffectiveDestructionDate(site)!;
         return {
-          date: new Date(effectiveDate!),
+          date: new Date(effectiveDate),
           siteName: site.name,
           siteId: site.id,
           status: site.status as "destroyed" | "heavily-damaged" | "damaged" | undefined,
+          // "YYYY-MM" means the sources pin the month but not the day. It parses
+          // to the 1st, so the timeline has to say so rather than draw it as fact.
+          datePrecision: /^\d{4}-\d{2}$/.test(effectiveDate)
+            ? ("month" as const)
+            : ("day" as const),
         };
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime());

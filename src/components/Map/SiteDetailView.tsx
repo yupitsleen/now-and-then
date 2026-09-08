@@ -25,6 +25,8 @@ interface SiteDetailViewProps {
   customMaxZoom?: number;
   // Optional date label to display at top of map
   dateLabel?: string;
+  // When provided, the date label becomes an editable date field
+  onDateLabelChange?: (date: string) => void;
   // Optional callback for when user clicks "See More" in popup
   onSiteClick?: (site: Site) => void;
   // Optional flag to indicate if comparison mode is active (disables adaptive zoom)
@@ -52,6 +54,7 @@ export function SiteDetailView({
   customTileUrl,
   customMaxZoom,
   dateLabel,
+  onDateLabelChange,
   onSiteClick,
   comparisonModeActive = false,
   zoomToSiteOverride,
@@ -158,8 +161,13 @@ export function SiteDetailView({
     <div className="relative h-full">
       {/* Date label - shown when provided (e.g., from Wayback imagery) */}
       {dateLabel && (
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000] pointer-events-none">
-          <DateLabel date={dateLabel} variant="single" size="md" />
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000]">
+          <DateLabel
+            date={dateLabel}
+            variant="single"
+            size="md"
+            onDateChange={onDateLabelChange}
+          />
         </div>
       )}
 

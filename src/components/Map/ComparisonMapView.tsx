@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import type { Site } from "../../types";
 import type { WaybackImagery } from "../../types/waybackTimelineTypes";
 import { SiteDetailView } from "./SiteDetailView";
@@ -30,6 +30,9 @@ interface ComparisonMapViewProps {
   /** Overlays pinned to the bottom-center of each map (imagery prev/next) */
   beforeControls?: ReactNode;
   afterControls?: ReactNode;
+  /** When provided, the date labels become editable and snap to the nearest release */
+  onBeforeDateChange?: (date: string) => void;
+  onAfterDateChange?: (date: string) => void;
 }
 
 /**
@@ -57,39 +60,27 @@ export function ComparisonMapView({
   afterMapSettings,
   beforeControls,
   afterControls,
+  onBeforeDateChange,
+  onAfterDateChange,
 }: ComparisonMapViewProps) {
-  // Publish the seam between the two maps so AppHeader can line its "&" up with it.
-  // ponytail: measured, not computed — survives sidebar collapse and window resize.
-  const leftMapRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = leftMapRef.current;
-    if (!el) return;
-    const root = document.documentElement;
-    const update = () =>
-      root.style.setProperty("--map-gap-x", `${el.getBoundingClientRect().right + 4}px`);
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    update();
-    return () => {
-      observer.disconnect();
-      root.style.removeProperty("--map-gap-x");
-    };
-  }, []);
-
   return (
     <div className="relative h-full">
       {/* Side-by-side map layout with gap-2 to match Dashboard */}
       <div className="flex h-full gap-2">
         {/* Left Map - Earlier imagery (before scrubber) */}
         <div
-          ref={leftMapRef}
           className="w-1/2 h-full border-2 rounded shadow-xl overflow-hidden relative"
           style={{ borderColor: COLORS.COMPARE_BEFORE }}
         >
           {/* Date label - styled like wayback tooltip but 1.5x larger with 70% opacity */}
           {before.dateLabel && (
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000] pointer-events-none">
-              <DateLabel date={before.dateLabel} variant="before" size="md" />
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000]">
+              <DateLabel
+                date={before.dateLabel}
+                variant="before"
+                size="md"
+                onDateChange={onBeforeDateChange}
+              />
             </div>
           )}
           <SiteDetailView
@@ -118,8 +109,13 @@ export function ComparisonMapView({
         >
           {/* Date label - styled like wayback tooltip but 1.5x larger with 70% opacity */}
           {after.dateLabel && (
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000] pointer-events-none">
-              <DateLabel date={after.dateLabel} variant="after" size="md" />
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000]">
+              <DateLabel
+                date={after.dateLabel}
+                variant="after"
+                size="md"
+                onDateChange={onAfterDateChange}
+              />
             </div>
           )}
           <SiteDetailView
