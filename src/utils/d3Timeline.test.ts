@@ -4,6 +4,7 @@ import {
   D3TimelineRenderer,
   DEFAULT_TIMELINE_CONFIG,
   withMarkDates,
+  nearestPlaced,
   type TimelineEvent,
 } from "./d3Timeline";
 
@@ -53,7 +54,11 @@ function render(events: TimelineEvent[], at: Date = DOMAIN_START, highlighted: s
       cy: Number(c.getAttribute("cy")),
       title: c.querySelector("title")?.textContent ?? "",
     })),
-    handleCx: Number(svg.querySelector(".scrubber-handle")?.getAttribute("cx")),
+    // The hit-area is a rect straddling the line, so its centre is the playhead x.
+    handleCx: (() => {
+      const hit = svg.querySelector(".scrubber-handle");
+      return Number(hit?.getAttribute("x")) + Number(hit?.getAttribute("width")) / 2;
+    })(),
     lineX: Number(svg.querySelector(".scrubber-line")?.getAttribute("x1")),
   };
 }
@@ -261,5 +266,25 @@ describe("withMarkDates", () => {
     expect([...marks].sort((a, b) => a - b)).toEqual(marks);
     // The Nov 20 event still sorts after the rings placed earlier in the month.
     expect(order.indexOf("late")).toBeGreaterThan(order.indexOf("ring0"));
+  });
+});
+
+describe("nearestPlaced", () => {
+  const at = (cx: number) => ({
+    event: { siteId: `s${cx}`, siteName: `Site ${cx}`, date: new Date(Date.UTC(2023, 9, 7)) },
+    cx,
+    cy: 0,
+  });
+
+  it("snaps to the closest dot, on either side", () => {
+    const placed = [at(10), at(100), at(300)];
+
+    expect(nearestPlaced(placed, 96)?.cx).toBe(100);
+    expect(nearestPlaced(placed, 140)?.cx).toBe(100);
+    expect(nearestPlaced(placed, 400)?.cx).toBe(300);
+  });
+
+  it("returns null when there is nothing to snap to", () => {
+    expect(nearestPlaced([], 50)).toBeNull();
   });
 });

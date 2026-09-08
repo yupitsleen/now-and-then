@@ -164,7 +164,7 @@ export function TimelineScrubber({
           onTimestampChange: setTimestamp,
           onPause: pause,
           onSiteHighlight: onSiteHighlight ? (event) => {
-            // Highlight the site when timeline dot is clicked
+            // Highlight the site when a timeline dot is clicked or dragged to
             onSiteHighlight(event.siteId);
           } : undefined,
         }

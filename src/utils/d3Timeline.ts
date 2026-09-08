@@ -70,19 +70,19 @@ export function withMarkDates(events: TimelineEvent[]): TimelineEvent[] {
 export interface TimelineConfig {
   height: number;
   margin: number;
-  scrubberRadius: number;
+  /** Width of the invisible drag hit-area centred on the playhead line. */
+  scrubberHitWidth: number;
   colors: {
     axis: string;
     axisLine: string;
     axisDomain: string;
     eventMarker: string;
     scrubberLine: string;
-    scrubberHandle: string;
   };
 }
 
 /** An event resolved to the point it is drawn at. */
-type PlacedEvent = { event: TimelineEvent; cx: number; cy: number };
+export type PlacedEvent = { event: TimelineEvent; cx: number; cy: number };
 
 /**
  * Events are drawn as dots. Rectangles read as bars — spans of time — which is
@@ -132,16 +132,28 @@ const AXIS_LABEL_SPACE = 17;
 export const DEFAULT_TIMELINE_CONFIG: TimelineConfig = {
   height: 64,
   margin: 25,
-  scrubberRadius: 5,
+  scrubberHitWidth: 12,
   colors: {
     axis: "#525252",
     axisLine: "#d4d4d4",
     axisDomain: "#a3a3a3",
     eventMarker: "#ed3039", // Palestinian flag red (default)
     scrubberLine: "#009639", // Palestinian flag green
-    scrubberHandle: "#009639",
   },
 };
+
+/**
+ * The dot the playhead should snap to for a given x.
+ *
+ * Dragging to an arbitrary instant selects nothing, so the selection ring would
+ * stay on whatever dot was last clicked, stranded away from the playhead.
+ * Snapping also keeps the two aligned for month-only events, whose dot is drawn
+ * somewhere inside its month while its timestamp is the 1st — see scrubberX.
+ */
+export function nearestPlaced(placed: PlacedEvent[], x: number): PlacedEvent | null {
+  if (placed.length === 0) return null;
+  return placed.reduce((best, p) => (Math.abs(p.cx - x) < Math.abs(best.cx - x) ? p : best));
+}
 
 /**
  * D3TimelineRenderer - Encapsulates all D3.js timeline rendering logic
@@ -412,10 +424,10 @@ export class D3TimelineRenderer {
   }
 
   /**
-   * Render the scrubber (vertical line + draggable handle)
+   * Render the scrubber (vertical line + the drag hit-area over it)
    */
   private renderScrubber(currentTimestamp: Date, placed: PlacedEvent[]) {
-    const { scrubberRadius, colors } = this.config;
+    const { scrubberHitWidth, colors } = this.config;
 
     const scrubberGroup = this.svg.append("g").attr("class", "scrubber-group");
 
@@ -432,46 +444,42 @@ export class D3TimelineRenderer {
       .attr("stroke", colors.scrubberLine)
       .attr("stroke-width", 2);
 
+    // Invisible hit-area over the whole line, not a knob at its foot: the line is
+    // what reads as the playhead, so that is what people aim at. Kept narrow —
+    // it sits above the dots, and anything wider swallows their hover and click.
     const handle = scrubberGroup
-      .append("circle")
+      .append("rect")
       .attr("class", "scrubber-handle")
-      .attr("cx", xPosition)
-      .attr("cy", this.baselineY)
-      .attr("r", scrubberRadius)
-      .attr("fill", colors.scrubberHandle)
-      // No stroke: with the event dots down at r2, a ringed handle was the
-      // heaviest mark on the strip. A playhead should not outweigh the data.
+      .attr("x", xPosition - scrubberHitWidth / 2)
+      .attr("y", 0)
+      .attr("width", scrubberHitWidth)
+      .attr("height", this.baselineY)
+      .attr("fill", "transparent")
       .style("cursor", "grab");
 
     // Native tooltip, same as the event dots: the date is on hover, not always on.
     handle.append("title").text(utcFormat("%B %d, %Y")(currentTimestamp));
 
-    const dragBehavior = drag<SVGCircleElement, unknown>()
-      .on("start", function () {
-        select(this)
-          .style("cursor", "grabbing")
-          .transition()
-          .duration(100)
-          .attr("r", scrubberRadius + 2)
-          .style("filter", "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))");
+    const dragBehavior = drag<SVGRectElement, unknown>()
+      .on("start", () => {
+        handle.style("cursor", "grabbing");
       })
       .on("drag", (event) => {
         const x = Math.max(
           this.timeScale.range()[0],
           Math.min(this.timeScale.range()[1], event.x)
         );
-        const newDate = this.timeScale.invert(x);
 
-        this.onTimestampChange(newDate);
+        const nearest = nearestPlaced(placed, x);
+        if (!nearest) return;
+
+        this.onTimestampChange(nearest.event.date);
+        this.onSiteHighlight?.(nearest.event);
       })
       .on("end", function () {
-        select(this)
-          .style("cursor", "grab")
-          .transition()
-          .duration(200)
-          .attr("r", scrubberRadius)
-          .style("filter", "none");
+        select(this).style("cursor", "grab");
       });
+
 
     handle.on("mousedown", () => {
       this.onPause();
