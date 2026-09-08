@@ -1,0 +1,4 @@
+# core.autocrlf is false here, so git stores exactly what a tool writes. Without this,
+# any editor or script that emits CRLF (Python's open(...,"w"), PowerShell's Set-Content)
+# silently rewrites a whole file and turns a two-line change into a 200-line diff.
+* text=auto eol=lf
