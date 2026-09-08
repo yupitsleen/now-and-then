@@ -99,7 +99,10 @@ export const it: Translations = {
     tooltipDefault:
       "Fai clic su Riproduci per animare gli eventi di distruzione. Usa il filtro data per concentrarti su periodi di tempo specifici. Fai clic sui punti per vedere i dettagli del sito.",
     tooltipAdvanced:
-      "Cronologia dei siti: ogni punto è un sito del patrimonio, collocato nella data in cui è stato distrutto. Fai clic su un punto per selezionare quel sito sulle mappe e nell'elenco dei siti; usa Precedente/Successivo per passare da un evento all'altro. Passa alla scheda Immagini per scorrere invece le date delle immagini satellitari disponibili.",
+      "Cronologia dei siti: ogni punto è un singolo sito del patrimonio, collocato nella data in cui è stato distrutto.\n" +
+      "• I punti impilati in una colonna sono siti distrutti lo stesso giorno: più alta è la colonna, più pesante è stata quella giornata.\n" +
+      "• Gli anelli vuoti sotto l'asse sono siti di cui le fonti indicano il mese ma non il giorno. Si distribuiscono lungo quel mese per indicare l'intervallo, non una data precisa.\n" +
+      "Fai clic su un punto per selezionare quel sito sulle mappe e nell'elenco dei siti; usa Precedente/Successivo per passare da un evento all'altro. Passa alla scheda Immagini per scorrere invece le date delle immagini satellitari disponibili.",
     tooltipImagery:
       "Cronologia delle immagini: ogni tacca è una data per cui l'archivio satellitare dispone di immagini. Trascina un cursore per cambiare le immagini mostrate sulle mappe. Passa alla scheda Siti per esplorare invece i siti del patrimonio per data di distruzione.",
     interval: "Intervallo",

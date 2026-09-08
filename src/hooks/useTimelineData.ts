@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Site } from "../types";
-import type { TimelineEvent } from "../utils/d3Timeline";
+import { withMarkDates, type TimelineEvent } from "../utils/d3Timeline";
 import { getEffectiveDestructionDate } from "../utils/format";
 
 /**
@@ -33,21 +33,26 @@ export function useTimelineData(sites: Site[]) {
             ? ("month" as const)
             : ("day" as const),
         };
-      })
-      .sort((a, b) => a.date.getTime() - b.date.getTime());
+      });
+
+    // Ordered by where each mark is drawn, not by its timestamp. Month-only
+    // events spread across their month, so the two orders differ — and stepping
+    // through events with Previous/Next has to follow the marks, or it walks
+    // backwards along the strip.
+    const ordered = withMarkDates(destructionDates);
 
     // Calculate event density for future visualizations
     const eventDensity =
-      destructionDates.length > 0
-        ? destructionDates.length /
-          ((destructionDates[destructionDates.length - 1].date.getTime() -
-            destructionDates[0].date.getTime()) /
+      ordered.length > 0
+        ? ordered.length /
+          ((ordered[ordered.length - 1].date.getTime() -
+            ordered[0].date.getTime()) /
             (1000 * 60 * 60 * 24)) // events per day
         : 0;
 
     return {
-      events: destructionDates,
-      totalEvents: destructionDates.length,
+      events: ordered,
+      totalEvents: ordered.length,
       eventDensity,
     };
   }, [sites]);

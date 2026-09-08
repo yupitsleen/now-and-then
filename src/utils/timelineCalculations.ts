@@ -23,10 +23,14 @@ export function calculateDefaultDateRange(
     return { defaultStartDate: fallbackStart, defaultEndDate: fallbackEnd };
   }
 
-  const timestamps = events.map((event) => event.date.getTime());
+  // The end uses markDate: a month-only event in the final month is drawn part
+  // way through it, so ending the scale at its timestamp would push that ring
+  // off the right edge. The start uses date, which is never later than markDate.
+  const starts = events.map((event) => event.date.getTime());
+  const ends = events.map((event) => (event.markDate ?? event.date).getTime());
   return {
-    defaultStartDate: new Date(Math.min(...timestamps)),
-    defaultEndDate: new Date(Math.max(...timestamps)),
+    defaultStartDate: new Date(Math.min(...starts)),
+    defaultEndDate: new Date(Math.max(...ends)),
   };
 }
 

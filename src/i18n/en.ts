@@ -100,7 +100,10 @@ export const en: Translations = {
     tooltipDefault:
       "Click Play to animate through destruction events on the left map. Use the date filter to focus on specific time periods. Click dots to see site details.",
     tooltipAdvanced:
-      "Sites timeline: each dot is a heritage site, placed on the date it was destroyed. Click a dot to select that site on the maps and in the sites list; use Previous/Next to step between events. Switch to the Imagery tab to move through the dates of available satellite imagery instead.",
+      "Sites timeline: each dot is one heritage site, placed on the date it was destroyed.\n" +
+      "• Dots stacked into a column were destroyed on the same day, so a taller column is a heavier day.\n" +
+      "• Hollow rings below the axis are sites whose sources record the month but not the day. They spread across that month to show the window, not an exact date.\n" +
+      "Click a dot to select that site on the maps and in the sites list; use Previous/Next to step between events. Switch to the Imagery tab to move through the dates of available satellite imagery instead.",
     tooltipImagery:
       "Imagery timeline: each tick is a date the satellite archive has imagery for. Drag a handle to change which imagery the maps show. Switch to the Sites tab to browse heritage sites by their destruction date instead.",
     interval: "Interval",
