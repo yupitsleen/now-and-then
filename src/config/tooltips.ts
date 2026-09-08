@@ -15,7 +15,6 @@
  * Header tooltips
  */
 export const HEADER_TOOLTIPS = {
-  HOME: "Return to Dashboard",
   HELP: "View page instructions and keyboard shortcuts",
   LANGUAGE: "Switch language", // Note: Could be made dynamic to show current language
   DARK_MODE_ON: "Switch to light mode",
