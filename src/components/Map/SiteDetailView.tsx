@@ -161,7 +161,7 @@ export function SiteDetailView({
     <div className="relative h-full">
       {/* Date label - shown when provided (e.g., from Wayback imagery) */}
       {dateLabel && (
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000]">
+        <div className="absolute top-2 right-2 z-[1000]">
           <DateLabel
             date={dateLabel}
             variant="single"

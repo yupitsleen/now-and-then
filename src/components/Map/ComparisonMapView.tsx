@@ -72,9 +72,9 @@ export function ComparisonMapView({
           className="w-1/2 h-full border-2 rounded shadow-xl overflow-hidden relative"
           style={{ borderColor: COLORS.COMPARE_BEFORE }}
         >
-          {/* Date label - styled like wayback tooltip but 1.5x larger with 70% opacity */}
+          {/* Date picker button - top right, clear of Leaflet's top-left zoom control */}
           {before.dateLabel && (
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000]">
+            <div className="absolute top-2 right-2 z-[1000]">
               <DateLabel
                 date={before.dateLabel}
                 variant="before"
@@ -107,9 +107,9 @@ export function ComparisonMapView({
           className="w-1/2 h-full border-2 rounded shadow-xl overflow-hidden relative"
           style={{ borderColor: COLORS.COMPARE_AFTER }}
         >
-          {/* Date label - styled like wayback tooltip but 1.5x larger with 70% opacity */}
+          {/* Date picker button - top right, clear of Leaflet's top-left zoom control */}
           {after.dateLabel && (
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-[1000]">
+            <div className="absolute top-2 right-2 z-[1000]">
               <DateLabel
                 date={after.dateLabel}
                 variant="after"
