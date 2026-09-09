@@ -19,4 +19,16 @@ describe("DateLabel", () => {
 
     expect(onDateChange).toHaveBeenCalledWith("2024-01-15");
   });
+
+  it("shows only a calendar button with the date on hover, opening the picker on click", () => {
+    const showPicker = vi.fn();
+    HTMLInputElement.prototype.showPicker = showPicker;
+    render(<DateLabel date="2023-10-01" variant="after" onDateChange={vi.fn()} />);
+
+    const button = screen.getByTitle("2023-10-01");
+    expect(button).not.toHaveTextContent("2023-10-01");
+
+    fireEvent.click(button);
+    expect(showPicker).toHaveBeenCalled();
+  });
 });
