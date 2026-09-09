@@ -9,10 +9,11 @@ export const TIMELINE_CONFIG = {
   /** Left/right margin for timeline (space for handles) */
   MARGIN: 50,
   /** SVG height for timeline visualization — the axis sits near the bottom and
-   *  same-day events stack above it, so this is baseline + stack + tick labels */
-  HEIGHT: 64,
+   *  same-day events stack above it, so this is the playhead's date band +
+   *  baseline + stack + tick labels */
+  HEIGHT: 80,
   /** Minimum height for timeline container */
-  MIN_HEIGHT: "64px",
+  MIN_HEIGHT: "80px",
 } as const;
 
 /**

@@ -60,6 +60,8 @@ function render(events: TimelineEvent[], at: Date = DOMAIN_START, highlighted: s
       return Number(hit?.getAttribute("x")) + Number(hit?.getAttribute("width")) / 2;
     })(),
     lineX: Number(svg.querySelector(".scrubber-line")?.getAttribute("x1")),
+    dateLabel: svg.querySelector(".scrubber-date-label text")?.textContent ?? "",
+    dateLabelX: Number(svg.querySelector(".scrubber-date-label text")?.getAttribute("x")),
   };
 }
 
@@ -286,5 +288,31 @@ describe("nearestPlaced", () => {
 
   it("returns null when there is nothing to snap to", () => {
     expect(nearestPlaced([], 50)).toBeNull();
+  });
+});
+
+describe("playhead date label", () => {
+  beforeEach(() => {
+    document.body.replaceChildren();
+  });
+
+  it("prints the selected date and rides the playhead", () => {
+    const events = [makeEvent("2023-10-15", "a"), makeEvent("2023-11-20", "b")];
+
+    const first = render(events, events[0].date);
+    expect(first.dateLabel).toBe("Oct 15, 2023");
+    expect(first.dateLabelX).toBe(first.lineX);
+
+    // Selecting the other site moves both the text and the pill.
+    const second = render(events, events[1].date, "b");
+    expect(second.dateLabel).toBe("Nov 20, 2023");
+    expect(second.dateLabelX).toBe(second.lineX);
+    expect(second.dateLabelX).toBeGreaterThan(first.dateLabelX);
+  });
+
+  it("prints only the month for a month-only selection", () => {
+    const { dateLabel } = render([makeEvent("2023-11", "a", "month")], new Date("2023-11-01T00:00:00Z"), "a");
+
+    expect(dateLabel).toBe("Nov 2023");
   });
 });

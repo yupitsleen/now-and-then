@@ -129,8 +129,18 @@ const MONTH_LANE_H = 11;
 /** Space kept below the axis line for its tick marks and labels (with descenders). */
 const AXIS_LABEL_SPACE = 17;
 
+/**
+ * Band at the top reserved for the playhead's date pill. The pill is always on —
+ * the selected date is the one thing the reader needs at a glance — so it gets
+ * its own strip rather than sitting over the dot stacks.
+ */
+const DATE_PILL_BAND = 17;
+
+/** Height of the pill itself, centred in the band. */
+const DATE_PILL_H = 15;
+
 export const DEFAULT_TIMELINE_CONFIG: TimelineConfig = {
-  height: 64,
+  height: 80,
   margin: 25,
   scrubberHitWidth: 12,
   colors: {
@@ -353,8 +363,9 @@ export class D3TimelineRenderer {
       .append("text")
       .attr("class", "event-date-label")
       .attr("x", (d) => d.cx)
-      // Clamped: a top-row dot's label would otherwise sit above the SVG and clip
-      .attr("y", (d) => Math.max(9, d.cy - HOVER_R - 4))
+      // Clamped out of the date band: a top-row dot's label would otherwise
+      // collide with the always-on playhead pill
+      .attr("y", (d) => Math.max(DATE_PILL_BAND + 9, d.cy - HOVER_R - 4))
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
       .attr("font-weight", "500")
@@ -413,14 +424,13 @@ export class D3TimelineRenderer {
    * x is a pointer to a mark, not a claim about a day. Only an exact timestamp
    * match counts, so dragging (which lands on arbitrary times) is unaffected.
    */
-  private scrubberX(currentTimestamp: Date, placed: PlacedEvent[]): number {
-    const selectedRing = placed.find(
+  private selectedRing(currentTimestamp: Date, placed: PlacedEvent[]): PlacedEvent | undefined {
+    return placed.find(
       (p) =>
         this.isMonthOnly(p.event) &&
         p.event.siteId === this.highlightedSiteId &&
         p.event.date.getTime() === currentTimestamp.getTime()
     );
-    return selectedRing ? selectedRing.cx : this.timeScale(currentTimestamp);
   }
 
   /**
@@ -431,14 +441,15 @@ export class D3TimelineRenderer {
 
     const scrubberGroup = this.svg.append("g").attr("class", "scrubber-group");
 
-    const xPosition = this.scrubberX(currentTimestamp, placed);
+    const ring = this.selectedRing(currentTimestamp, placed);
+    const xPosition = ring ? ring.cx : this.timeScale(currentTimestamp);
 
     // Spans the full stack so the playhead crosses every dot, not just row 0
     scrubberGroup
       .append("line")
       .attr("class", "scrubber-line")
       .attr("x1", xPosition)
-      .attr("y1", 2)
+      .attr("y1", DATE_PILL_BAND)
       .attr("x2", xPosition)
       .attr("y2", this.baselineY)
       .attr("stroke", colors.scrubberLine)
@@ -457,8 +468,48 @@ export class D3TimelineRenderer {
       .attr("fill", "transparent")
       .style("cursor", "grab");
 
-    // Native tooltip, same as the event dots: the date is on hover, not always on.
     handle.append("title").text(utcFormat("%B %d, %Y")(currentTimestamp));
+
+    // The selected date, always on and riding the playhead. A month-only
+    // selection prints its month: the pill must never claim a day the sources
+    // don't give.
+    const label = ring
+      ? utcFormat("%b %Y")(currentTimestamp)
+      : utcFormat("%b %d, %Y")(currentTimestamp);
+
+    // ponytail: width estimated from the character count rather than measured —
+    // getBBox needs a laid-out SVG, which tests don't have. Swap to getBBox if
+    // the pill ever holds text this heuristic can't size.
+    const pillW = label.length * 6.4 + 14;
+    const [rangeStart, rangeEnd] = this.timeScale.range();
+    // Clamped to the scale's range, which is inset from the SVG edges by the
+    // margin, so a pill centred at either end still fits on screen.
+    const pillCx = Math.max(rangeStart, Math.min(rangeEnd, xPosition));
+
+    const pill = scrubberGroup
+      .append("g")
+      .attr("class", "scrubber-date-label")
+      .style("pointer-events", "none");
+
+    pill
+      .append("rect")
+      .attr("x", pillCx - pillW / 2)
+      .attr("y", (DATE_PILL_BAND - DATE_PILL_H) / 2)
+      .attr("width", pillW)
+      .attr("height", DATE_PILL_H)
+      .attr("rx", 3)
+      .attr("fill", colors.scrubberLine);
+
+    pill
+      .append("text")
+      .attr("x", pillCx)
+      .attr("y", DATE_PILL_BAND / 2)
+      .attr("dominant-baseline", "central")
+      .attr("text-anchor", "middle")
+      .attr("font-size", "11px")
+      .attr("font-weight", "600")
+      .attr("fill", "#ffffff")
+      .text(label);
 
     const dragBehavior = drag<SVGRectElement, unknown>()
       .on("start", () => {
