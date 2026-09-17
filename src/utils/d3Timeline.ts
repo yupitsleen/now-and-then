@@ -477,10 +477,6 @@ export class D3TimelineRenderer {
       ? utcFormat("%b %Y")(currentTimestamp)
       : utcFormat("%b %d, %Y")(currentTimestamp);
 
-    // ponytail: width estimated from the character count rather than measured —
-    // getBBox needs a laid-out SVG, which tests don't have. Swap to getBBox if
-    // the pill ever holds text this heuristic can't size.
-    const pillW = label.length * 6.4 + 14;
     const [rangeStart, rangeEnd] = this.timeScale.range();
     // Clamped to the scale's range, which is inset from the SVG edges by the
     // margin, so a pill centred at either end still fits on screen.
@@ -491,16 +487,10 @@ export class D3TimelineRenderer {
       .attr("class", "scrubber-date-label")
       .style("pointer-events", "none");
 
-    pill
-      .append("rect")
-      .attr("x", pillCx - pillW / 2)
-      .attr("y", (DATE_PILL_BAND - DATE_PILL_H) / 2)
-      .attr("width", pillW)
-      .attr("height", DATE_PILL_H)
-      .attr("rx", 3)
-      .attr("fill", colors.scrubberLine);
-
-    pill
+    // Append text first at a placeholder position so getBBox can measure it,
+    // then size and place the rect behind it. jsdom / detached SVGs return 0
+    // width — fall back to the character-count heuristic in that case.
+    const text = pill
       .append("text")
       .attr("x", pillCx)
       .attr("y", DATE_PILL_BAND / 2)
@@ -510,6 +500,24 @@ export class D3TimelineRenderer {
       .attr("font-weight", "600")
       .attr("fill", "#ffffff")
       .text(label);
+
+    let measuredWidth = 0;
+    try {
+      measuredWidth = text.node()?.getBBox().width ?? 0;
+    } catch {
+      measuredWidth = 0;
+    }
+    const pillW = (measuredWidth > 0 ? measuredWidth : label.length * 6.4) + 14;
+
+    // insert() places the rect BEFORE the text in DOM order, so text stays on top.
+    pill
+      .insert("rect", "text")
+      .attr("x", pillCx - pillW / 2)
+      .attr("y", (DATE_PILL_BAND - DATE_PILL_H) / 2)
+      .attr("width", pillW)
+      .attr("height", DATE_PILL_H)
+      .attr("rx", 3)
+      .attr("fill", colors.scrubberLine);
 
     const dragBehavior = drag<SVGRectElement, unknown>()
       .on("start", () => {

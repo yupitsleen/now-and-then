@@ -552,7 +552,13 @@ export function Timeline() {
                   style={{ width: sidebarWidth }}
                 >
                   <Suspense fallback={<SkeletonMap />}>
-                    <MiniMap sites={filteredSites} highlightedSiteId={highlightedSiteId} />
+                    <MiniMap
+                      highlightedSite={
+                        highlightedSiteId
+                          ? filteredSites.find((s) => s.id === highlightedSiteId) ?? null
+                          : null
+                      }
+                    />
                   </Suspense>
                 </div>
               )}

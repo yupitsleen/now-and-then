@@ -10,8 +10,10 @@ import "leaflet/dist/leaflet.css";
 const MINI_MAP_ZOOM = 8.5;
 
 interface MiniMapProps {
-  sites: Site[];
-  highlightedSiteId: string | null;
+  /** The resolved highlighted site, or null. Passed in already-looked-up so
+   *  MiniMap doesn't take a whole array reference that changes every filter tick
+   *  (which would defeat the memo below). */
+  highlightedSite: Site | null;
 }
 
 /** Tells Leaflet to recalculate when the container resizes (e.g. stacked timelines). */
@@ -32,13 +34,9 @@ function InvalidateOnResize(): null {
  * Small, non-interactive overview map showing Gaza with a single marker
  * for the currently highlighted site.
  */
-export const MiniMap = memo(function MiniMap({ sites, highlightedSiteId }: MiniMapProps) {
+export const MiniMap = memo(function MiniMap({ highlightedSite }: MiniMapProps) {
   const { isDark } = useTheme();
   const tileConfig = useTileConfig({ theme: isDark ? "dark" : "light" });
-
-  const highlightedSite = highlightedSiteId
-    ? sites.find((s) => s.id === highlightedSiteId)
-    : undefined;
 
   return (
     <MapContainer

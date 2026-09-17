@@ -328,6 +328,13 @@ export function TimelineScrubber({
   // Keyboard controls — defined after goToPrev/Next so the effect closure can call them
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't hijack space/arrows when the user is typing in a form field.
+      const target = e.target as HTMLElement | null;
+      if (
+        target?.closest?.("input, textarea, select, [contenteditable=true]")
+      ) {
+        return;
+      }
       switch (e.key) {
         case " ": // Space - play/pause
           e.preventDefault();

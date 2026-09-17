@@ -95,7 +95,8 @@ export function TableRow({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onSiteClick?.(site);
+                // nameIsButton implies onSiteClick is truthy
+                onSiteClick!(site);
               }}
               className="text-left w-full hover:underline"
             >
