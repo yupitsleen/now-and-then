@@ -205,57 +205,6 @@ export function TimelineScrubber({
     }
   }, [reset, onSiteHighlight, advancedMode]);
 
-  // Keyboard controls
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case " ": // Space - play/pause
-          e.preventDefault();
-          if (isPlaying) {
-            pause();
-          } else {
-            play();
-          }
-          break;
-        case "ArrowLeft": // Step backward by 1 day
-          e.preventDefault();
-          pause();
-          setTimestamp(
-            new Date(currentTimestamp.getTime() - 24 * 60 * 60 * 1000)
-          );
-          break;
-        case "ArrowRight": // Step forward by 1 day
-          e.preventDefault();
-          pause();
-          setTimestamp(
-            new Date(currentTimestamp.getTime() + 24 * 60 * 60 * 1000)
-          );
-          break;
-        case "Home": // Jump to start
-          e.preventDefault();
-          pause();
-          handleReset();
-          break;
-        case "End": // Jump to end
-          e.preventDefault();
-          pause();
-          setTimestamp(endDate);
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    currentTimestamp,
-    isPlaying,
-    play,
-    pause,
-    handleReset,
-    setTimestamp,
-    endDate,
-  ]);
-
   // Nav (and the Reset button it hosts) only render in advanced mode
   const showNavigation = !!advancedMode && advancedMode.showNavigation !== false;
 
@@ -375,6 +324,54 @@ export function TimelineScrubber({
       }
     }
   };
+
+  // Keyboard controls — defined after goToPrev/Next so the effect closure can call them
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case " ": // Space - play/pause
+          e.preventDefault();
+          if (isPlaying) {
+            pause();
+          } else {
+            play();
+          }
+          break;
+        case "ArrowLeft": // Step to previous event (site)
+          e.preventDefault();
+          pause();
+          goToPreviousEvent();
+          break;
+        case "ArrowRight": // Step to next event (site)
+          e.preventDefault();
+          pause();
+          goToNextEvent();
+          break;
+        case "Home": // Jump to start
+          e.preventDefault();
+          pause();
+          handleReset();
+          break;
+        case "End": // Jump to end
+          e.preventDefault();
+          pause();
+          setTimestamp(endDate);
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isPlaying,
+    play,
+    pause,
+    handleReset,
+    setTimestamp,
+    endDate,
+    goToPreviousEvent,
+    goToNextEvent,
+  ]);
 
   return (
     <div
