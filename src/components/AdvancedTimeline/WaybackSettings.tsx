@@ -22,9 +22,6 @@ interface WaybackSettingsProps {
   onBeforeIndexChange?: (index: number) => void;
   afterIndex?: number;
   onAfterIndexChange?: (index: number) => void;
-  /** Advanced: reveal the Wayback imagery slider (hidden by default) */
-  showImagerySlider?: boolean;
-  onShowImagerySliderToggle?: () => void;
   /** View option: stack the imagery slider and site timeline instead of tabbing between them */
   separateTimelines?: boolean;
   onSeparateTimelinesToggle?: () => void;
@@ -50,8 +47,6 @@ export function WaybackSettings({
   onBeforeIndexChange,
   afterIndex,
   onAfterIndexChange,
-  showImagerySlider = false,
-  onShowImagerySliderToggle,
   separateTimelines = false,
   onSeparateTimelinesToggle,
   onOpenHelp,
@@ -150,17 +145,7 @@ export function WaybackSettings({
           {translate("timeline.advancedSettings")}
         </summary>
         <div className="flex flex-col items-stretch gap-3 mt-3">
-          {onShowImagerySliderToggle &&
-            checkbox(
-              translate("timeline.showImagerySlider"),
-              showImagerySlider,
-              onShowImagerySliderToggle,
-              translate("timeline.showImagerySliderTooltip")
-            )}
-
-          {/* Stacked-vs-tabbed only means anything once the slider exists. */}
-          {showImagerySlider &&
-            onSeparateTimelinesToggle &&
+          {onSeparateTimelinesToggle &&
             checkbox(
               translate("timeline.separateTimelines"),
               separateTimelines,

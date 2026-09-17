@@ -134,8 +134,6 @@ export function Timeline() {
   // Modal states for footer and help
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  // Imagery slider on by default; turning it off in Advanced Settings leaves no tabs.
-  const [showImagerySlider, setShowImagerySlider] = useState(true);
   // View option: tabs (default) vs. both timelines stacked, as they used to be
   const [separateTimelines, setSeparateTimelines] = useState(false);
   const [timelineTab, setTimelineTab] = useState<"imagery" | "sites">("sites");
@@ -174,9 +172,9 @@ export function Timeline() {
       }
     : undefined;
 
-  // Three layouts: sites only (default), tabbed, stacked.
-  const stacked = showImagerySlider && separateTimelines;
-  const tabbed = showImagerySlider && !separateTimelines;
+  // Two layouts: tabbed (default) or stacked.
+  const stacked = separateTimelines;
+  const tabbed = !separateTimelines;
 
   // Tabbed mode: both panels fill the shared grid cell (h-full on the panel's own
   // bordered container too), so the visible box is identical on either tab.
@@ -450,8 +448,6 @@ export function Timeline() {
                       onBeforeIndexChange={setBeforeReleaseIndex}
                       afterIndex={currentReleaseIndex}
                       onAfterIndexChange={setCurrentReleaseIndex}
-                      showImagerySlider={showImagerySlider}
-                      onShowImagerySliderToggle={() => setShowImagerySlider(!showImagerySlider)}
                       separateTimelines={separateTimelines}
                       onSeparateTimelinesToggle={() => setSeparateTimelines(!separateTimelines)}
                       onOpenHelp={() => setIsHelpOpen(true)}
@@ -629,26 +625,24 @@ export function Timeline() {
                 </Suspense>
               </div>
 
-              {showImagerySlider && (
-                <div
-                  {...timelinePanelProps("imagery")}
-                  className={`${tabPanelClass} ${tabbed ? "absolute inset-0" : ""} ${
-                    tabbed && timelineTab !== "imagery"
-                      ? "invisible pointer-events-none"
-                      : ""
-                  }`}
-                >
-                  <WaybackSlider
-                    releases={releases}
-                    currentIndex={currentReleaseIndex}
-                    onIndexChange={setCurrentReleaseIndex}
-                    mapsInsetPx={sidebarRailed ? sidebarWidth + CONTENT_GAP_PX : 0}
-                    comparisonMode={comparisonModeEnabled}
-                    beforeIndex={beforeReleaseIndex}
-                    onBeforeIndexChange={setBeforeReleaseIndex}
-                  />
-                </div>
-              )}
+              <div
+                {...timelinePanelProps("imagery")}
+                className={`${tabPanelClass} ${tabbed ? "absolute inset-0" : ""} ${
+                  tabbed && timelineTab !== "imagery"
+                    ? "invisible pointer-events-none"
+                    : ""
+                }`}
+              >
+                <WaybackSlider
+                  releases={releases}
+                  currentIndex={currentReleaseIndex}
+                  onIndexChange={setCurrentReleaseIndex}
+                  mapsInsetPx={sidebarRailed ? sidebarWidth + CONTENT_GAP_PX : 0}
+                  comparisonMode={comparisonModeEnabled}
+                  beforeIndex={beforeReleaseIndex}
+                  onBeforeIndexChange={setBeforeReleaseIndex}
+                />
+              </div>
             </div>
             </div>
             </div>

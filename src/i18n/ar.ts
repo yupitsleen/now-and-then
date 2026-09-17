@@ -135,9 +135,6 @@ export const ar: Translations = {
     tabImagery: "الصور",
     tabSites: "المواقع",
     advancedSettings: "إعدادات متقدمة",
-    showImagerySlider: "إظهار شريط الصور",
-    showImagerySliderTooltip:
-      "إضافة شريط صور الأقمار الصناعية إلى جانب الخط الزمني للمواقع",
     darkMode: "الوضع الداكن",
     language: "اللغة",
   },

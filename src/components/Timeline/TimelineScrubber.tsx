@@ -293,7 +293,7 @@ export function TimelineScrubber({
   const canGoPrevious = !!advancedMode && currentEventIndex >= 0;
   const canGoNext = !!advancedMode && destructionDates.length > 0 && currentEventIndex < destructionDates.length - 1;
 
-  const goToPreviousEvent = () => {
+  const goToPreviousEvent = useCallback(() => {
     if (canGoPrevious) {
       if (currentEventIndex === 0) {
         // At first event, go back to timeline start (before first event)
@@ -311,9 +311,9 @@ export function TimelineScrubber({
         }
       }
     }
-  };
+  }, [canGoPrevious, currentEventIndex, destructionDates, setTimestamp, startDate, onSiteHighlight]);
 
-  const goToNextEvent = () => {
+  const goToNextEvent = useCallback(() => {
     if (canGoNext) {
       // If we're before all events (index -1), go to first event (index 0)
       const targetIndex = currentEventIndex === -1 ? 0 : currentEventIndex + 1;
@@ -323,7 +323,7 @@ export function TimelineScrubber({
         onSiteHighlight(nextEvent.siteId);
       }
     }
-  };
+  }, [canGoNext, currentEventIndex, destructionDates, setTimestamp, onSiteHighlight]);
 
   // Keyboard controls — defined after goToPrev/Next so the effect closure can call them
   useEffect(() => {
