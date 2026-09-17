@@ -14,6 +14,7 @@ interface SitesTableProps {
   visibleColumns?: string[]; // For resizable table - which columns to show
   tooltipText?: string; // Optional custom tooltip text for the info icon
   clickableRow?: boolean; // If true, entire row opens site detail (for Data page)
+  nameClickOnlyWhenHighlighted?: boolean; // Timeline: two-step (click row highlights, then name opens detail)
   embedded?: boolean; // Drop the panel chrome (border/background/title) - host provides it
 }
 
@@ -39,6 +40,7 @@ export function SitesTable({
   visibleColumns,
   tooltipText,
   clickableRow = false,
+  nameClickOnlyWhenHighlighted = false,
   embedded = false,
 }: SitesTableProps) {
   // Route to appropriate variant component
@@ -59,6 +61,7 @@ export function SitesTable({
       visibleColumns={visibleColumns}
       tooltipText={tooltipText}
       clickableRow={clickableRow}
+      nameClickOnlyWhenHighlighted={nameClickOnlyWhenHighlighted}
       embedded={embedded}
     />
   );
