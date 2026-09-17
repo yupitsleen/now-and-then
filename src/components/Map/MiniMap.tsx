@@ -4,7 +4,6 @@ import type { Site } from "../../types";
 import { GAZA_CENTER } from "../../constants/map";
 import { useTileConfig } from "../../hooks/useTileConfig";
 import { useTheme } from "../../contexts/ThemeContext";
-import { getStatusHexColor } from "../../utils/colorHelpers";
 import "leaflet/dist/leaflet.css";
 
 // ponytail: zoom 8.5 fits all of Gaza + Rafah in the tiny container
@@ -66,11 +65,11 @@ export const MiniMap = memo(function MiniMap({ sites, highlightedSiteId }: MiniM
       {highlightedSite && (
         <CircleMarker
           center={highlightedSite.coordinates}
-          radius={7}
+          radius={4}
           pathOptions={{
             color: "#fff",
-            weight: 2,
-            fillColor: getStatusHexColor(highlightedSite.status),
+            weight: 1,
+            fillColor: "#ff1a1a",
             fillOpacity: 1,
           }}
         />
