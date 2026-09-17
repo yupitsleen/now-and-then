@@ -18,7 +18,11 @@ async function openAdvancedSettings(page: import("@playwright/test").Page) {
   const show = page.getByRole("button", { name: /show filters/i });
   if (await show.isVisible()) await show.click();
   await page.getByRole("tab", { name: /^settings$/i }).click();
-  await page.getByText(/advanced settings/i).click();
+  // Advanced Settings is a <details> that ships open; only click to open if collapsed.
+  const advanced = page.locator("details", { hasText: /advanced settings/i });
+  if ((await advanced.getAttribute("open")) === null) {
+    await advanced.locator("summary").click();
+  }
 }
 
 test.describe("User preferences", () => {
