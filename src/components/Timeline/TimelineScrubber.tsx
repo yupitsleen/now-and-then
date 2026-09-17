@@ -385,7 +385,7 @@ export function TimelineScrubber({
       {/* Controls sit above the track so the track keeps the full card width */}
       {/* dir="ltr" keeps media controls left-to-right regardless of language */}
       {/* min-h holds the row steady whether the caption wraps to one line or two */}
-      <div className="flex min-h-[2.25rem] items-center gap-4" dir="ltr">
+      <div className="relative flex min-h-[2.25rem] items-center gap-4" dir="ltr">
         {/* Transport: reset, play/pause, then step back/forward — one group, so
             stepping through events doesn't send the pointer across the card */}
         {/* ponytail: indent past the tab strip the Timeline page overlays on this
@@ -421,9 +421,11 @@ export function TimelineScrubber({
           )}
         </div>
 
-        {/* The card's label, reading after the controls it belongs to. */}
-        {/* ponytail: theme text, not literal white — the card is white in light mode */}
-        <div className="min-w-0 flex-1">
+        {/* ponytail: absolute-centered on the card, same strategy as WaybackSlider's
+            header. Controls (left) and InfoIcon (right) sit above it in the flex row;
+            pointer-events-none keeps it from eating their clicks. */}
+        <div className="min-w-0 flex-1" />
+        <div className="pointer-events-none absolute inset-x-0 mx-auto w-fit max-w-full px-2 text-center">
           <p className={`truncate text-sm font-semibold leading-tight ${t.text.heading}`}>
             Timeline of destructive assaults on culturally significant sites
           </p>
