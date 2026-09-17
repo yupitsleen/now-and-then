@@ -1,6 +1,7 @@
 import { TileLayer, LayersControl } from "react-leaflet";
 import { useTileConfig } from "../../hooks/useTileConfig";
 import { useTheme } from "../../contexts/ThemeContext";
+import { TILE_CONFIGS } from "../../constants/map";
 
 /**
  * MapTileLayers - Configures map tile layers with street/dark toggle
@@ -26,9 +27,9 @@ export function MapTileLayers() {
       {/* Dark Map (Default in dark mode) - CartoDB Dark Matter */}
       <LayersControl.BaseLayer checked={isDark} name="Dark Map">
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-          subdomains={['a', 'b', 'c', 'd']}
+          attribution={TILE_CONFIGS.dark.attribution}
+          url={TILE_CONFIGS.dark.url}
+          subdomains={TILE_CONFIGS.dark.subdomains}
           maxZoom={19}
         />
       </LayersControl.BaseLayer>

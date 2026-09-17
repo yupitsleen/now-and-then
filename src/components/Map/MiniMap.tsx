@@ -33,17 +33,12 @@ function InvalidateOnResize(): null {
  * for the currently highlighted site.
  */
 export const MiniMap = memo(function MiniMap({ sites, highlightedSiteId }: MiniMapProps) {
-  const tileConfig = useTileConfig();
   const { isDark } = useTheme();
+  const tileConfig = useTileConfig({ theme: isDark ? "dark" : "light" });
 
   const highlightedSite = highlightedSiteId
     ? sites.find((s) => s.id === highlightedSiteId)
     : undefined;
-
-  const tileUrl = isDark
-    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
-    : tileConfig.url;
-  const tileSubdomains = isDark ? "abcd" : tileConfig.subdomains;
 
   return (
     <MapContainer
@@ -60,7 +55,7 @@ export const MiniMap = memo(function MiniMap({ sites, highlightedSiteId }: MiniM
       className="h-full w-full"
       style={{ background: isDark ? "#1a1a2e" : "#f0f0f0" }}
     >
-      <TileLayer url={tileUrl} subdomains={tileSubdomains} />
+      <TileLayer url={tileConfig.url} subdomains={tileConfig.subdomains} />
       <InvalidateOnResize />
       {highlightedSite && (
         <CircleMarker
