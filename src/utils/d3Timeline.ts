@@ -340,12 +340,12 @@ export class D3TimelineRenderer {
       // A month-only mark is a ring at partial fill, in the lane below the axis.
       // It keeps a real fill rather than fill="none" — an unfilled shape has no
       // interior to hover, which is what left these markers without a tooltip.
-      .attr("fill", colors.eventMarker)
+      .attr("fill", (d) => (this.isMonthOnly(d.event) ? "#eab308" : colors.eventMarker))
       .attr("fill-opacity", (d) => (this.isMonthOnly(d.event) ? MONTH_ONLY_FILL_OPACITY : 1))
       // No outline on solid dots — placement already keeps them apart, so a
       // stroke on every one only smears the dense columns.
       .attr("stroke", (d) =>
-        isHighlighted(d) ? "#009639" : this.isMonthOnly(d.event) ? colors.eventMarker : "none"
+        isHighlighted(d) ? "#009639" : this.isMonthOnly(d.event) ? "#eab308" : "none"
       )
       .attr("stroke-width", (d) => (isHighlighted(d) ? 2 : this.isMonthOnly(d.event) ? 1.25 : 0))
       .style("cursor", "pointer")
