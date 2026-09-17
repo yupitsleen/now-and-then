@@ -7,8 +7,8 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { getStatusHexColor } from "../../utils/colorHelpers";
 import "leaflet/dist/leaflet.css";
 
-// ponytail: zoom 9.5 fits all of Gaza in the mini-map so it never needs to pan
-const MINI_MAP_ZOOM = 9.5;
+// ponytail: zoom 8.5 fits all of Gaza + Rafah in the tiny container
+const MINI_MAP_ZOOM = 8.5;
 
 interface MiniMapProps {
   sites: Site[];
