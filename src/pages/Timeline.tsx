@@ -43,6 +43,9 @@ const TimelineScrubber = lazy(() =>
 const SiteDetailPanel = lazy(() =>
   import("../components/SiteDetail/SiteDetailPanel").then((m) => ({ default: m.SiteDetailPanel }))
 );
+const MiniMap = lazy(() =>
+  import("../components/Map/MiniMap").then((m) => ({ default: m.MiniMap }))
+);
 
 /** Default "before" imagery baseline — pre-destruction reference point */
 const WAYBACK_BASELINE_DATE = new Date("2019-06-05");
@@ -542,12 +545,25 @@ export function Timeline() {
                 </div>
               </div>
 
+            {/* Bottom row: mini locator map + timeline panels */}
+            <div className="flex-shrink-0 flex gap-2 relative z-10" inert={tableExpanded}>
+              {/* Mini overview map — same width as the sidebar */}
+              {!sidebarRailed && (
+                <div
+                  className={`flex-shrink-0 ${t.border.primary2} rounded shadow-xl overflow-hidden`}
+                  style={{ width: sidebarWidth }}
+                >
+                  <Suspense fallback={<SkeletonMap />}>
+                    <MiniMap sites={filteredSites} highlightedSiteId={highlightedSiteId} />
+                  </Suspense>
+                </div>
+              )}
+
             {/* Combined panel: tabs sit inside the panel's top-left corner. The
                 `timeline-tabbed` class tells the panels' control rows to indent past
                 the tablist. Hidden when the user opts into the stacked layout. */}
             <div
-              className={`flex-shrink-0 flex flex-col gap-2 relative z-10 ${tabbed ? "timeline-tabbed" : ""}`}
-              inert={tableExpanded}
+              className={`flex-1 min-w-0 flex flex-col gap-2 relative ${tabbed ? "timeline-tabbed" : ""}`}
             >
             {tabbed && (
               <div
@@ -626,13 +642,14 @@ export function Timeline() {
                     releases={releases}
                     currentIndex={currentReleaseIndex}
                     onIndexChange={setCurrentReleaseIndex}
-                    mapsInsetPx={sidebarWidth + CONTENT_GAP_PX}
+                    mapsInsetPx={sidebarRailed ? sidebarWidth + CONTENT_GAP_PX : 0}
                     comparisonMode={comparisonModeEnabled}
                     beforeIndex={beforeReleaseIndex}
                     onBeforeIndexChange={setBeforeReleaseIndex}
                   />
                 </div>
               )}
+            </div>
             </div>
             </div>
 

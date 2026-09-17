@@ -4,7 +4,19 @@
     - CRUD operations (only my account can without an approval feature)
         - But people can have personal sites saved
     - Supabase
+1. month site markers on timeline diff color?
 
+
+1. bottom left (move timeline over for room) under the data scroll, a mini map of the general region, gaza, with a point showing where the site currently selected is. non-satellite version
+
+----------------------------------------------------------------------------------------
+
+DONE
+1. date pickers on maps -- just have calendar symbol and hovering shows the date, clicking opens date picker. its confusing to have the dates there so prominent when the timeline's dates are small
+1. make timeline date more visible. on timeline itself, changes with site change
+1. hovering over the site name in the header says Dashboard which doesnt exist
+1. get rid of big green scrubber on timeline--the little green one is good, keep green line
+1. stop tests running on inactive pages, such as Resources
 1. make more clear wayback slider next prev buttons go with the left/right map respectively, maybe put on the map itself
     - line up the page better so obvious
     - make more clearly matched to the outline (i.e. green and yellow more spots)
@@ -13,10 +25,6 @@
 1. i icon with tool tips to hover over instead of getting tool tip when hovering over any random element
 1. make event timeline logarithmic maybe since clustered data
 1. for tool tips that cant have an i icon, have a setting for a 'hint' or help mode of the sight to show
-
-----------------------------------------------------------------------------------------
-
-DONE
 1. maybe remove the wayback timeline tab bc too complicated and confusing
     - have Advanced settings to turn on
 1. get rid of header bc one page (make datapage a modal over the main page via clicking expand)
