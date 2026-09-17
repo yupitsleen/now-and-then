@@ -70,19 +70,19 @@ export function withMarkDates(events: TimelineEvent[]): TimelineEvent[] {
 export interface TimelineConfig {
   height: number;
   margin: number;
-  scrubberRadius: number;
+  /** Width of the invisible drag hit-area centred on the playhead line. */
+  scrubberHitWidth: number;
   colors: {
     axis: string;
     axisLine: string;
     axisDomain: string;
     eventMarker: string;
     scrubberLine: string;
-    scrubberHandle: string;
   };
 }
 
 /** An event resolved to the point it is drawn at. */
-type PlacedEvent = { event: TimelineEvent; cx: number; cy: number };
+export type PlacedEvent = { event: TimelineEvent; cx: number; cy: number };
 
 /**
  * Events are drawn as dots. Rectangles read as bars — spans of time — which is
@@ -129,19 +129,41 @@ const MONTH_LANE_H = 11;
 /** Space kept below the axis line for its tick marks and labels (with descenders). */
 const AXIS_LABEL_SPACE = 17;
 
+/**
+ * Band at the top reserved for the playhead's date pill. The pill is always on —
+ * the selected date is the one thing the reader needs at a glance — so it gets
+ * its own strip rather than sitting over the dot stacks.
+ */
+const DATE_PILL_BAND = 17;
+
+/** Height of the pill itself, centred in the band. */
+const DATE_PILL_H = 15;
+
 export const DEFAULT_TIMELINE_CONFIG: TimelineConfig = {
-  height: 64,
+  height: 80,
   margin: 25,
-  scrubberRadius: 5,
+  scrubberHitWidth: 12,
   colors: {
     axis: "#525252",
     axisLine: "#d4d4d4",
     axisDomain: "#a3a3a3",
     eventMarker: "#ed3039", // Palestinian flag red (default)
     scrubberLine: "#009639", // Palestinian flag green
-    scrubberHandle: "#009639",
   },
 };
+
+/**
+ * The dot the playhead should snap to for a given x.
+ *
+ * Dragging to an arbitrary instant selects nothing, so the selection ring would
+ * stay on whatever dot was last clicked, stranded away from the playhead.
+ * Snapping also keeps the two aligned for month-only events, whose dot is drawn
+ * somewhere inside its month while its timestamp is the 1st — see scrubberX.
+ */
+export function nearestPlaced(placed: PlacedEvent[], x: number): PlacedEvent | null {
+  if (placed.length === 0) return null;
+  return placed.reduce((best, p) => (Math.abs(p.cx - x) < Math.abs(best.cx - x) ? p : best));
+}
 
 /**
  * D3TimelineRenderer - Encapsulates all D3.js timeline rendering logic
@@ -318,12 +340,12 @@ export class D3TimelineRenderer {
       // A month-only mark is a ring at partial fill, in the lane below the axis.
       // It keeps a real fill rather than fill="none" — an unfilled shape has no
       // interior to hover, which is what left these markers without a tooltip.
-      .attr("fill", colors.eventMarker)
+      .attr("fill", (d) => (this.isMonthOnly(d.event) ? "#eab308" : colors.eventMarker))
       .attr("fill-opacity", (d) => (this.isMonthOnly(d.event) ? MONTH_ONLY_FILL_OPACITY : 1))
       // No outline on solid dots — placement already keeps them apart, so a
       // stroke on every one only smears the dense columns.
       .attr("stroke", (d) =>
-        isHighlighted(d) ? "#009639" : this.isMonthOnly(d.event) ? colors.eventMarker : "none"
+        isHighlighted(d) ? "#009639" : this.isMonthOnly(d.event) ? "#eab308" : "none"
       )
       .attr("stroke-width", (d) => (isHighlighted(d) ? 2 : this.isMonthOnly(d.event) ? 1.25 : 0))
       .style("cursor", "pointer")
@@ -341,8 +363,9 @@ export class D3TimelineRenderer {
       .append("text")
       .attr("class", "event-date-label")
       .attr("x", (d) => d.cx)
-      // Clamped: a top-row dot's label would otherwise sit above the SVG and clip
-      .attr("y", (d) => Math.max(9, d.cy - HOVER_R - 4))
+      // Clamped out of the date band: a top-row dot's label would otherwise
+      // collide with the always-on playhead pill
+      .attr("y", (d) => Math.max(DATE_PILL_BAND + 9, d.cy - HOVER_R - 4))
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
       .attr("font-weight", "500")
@@ -401,77 +424,121 @@ export class D3TimelineRenderer {
    * x is a pointer to a mark, not a claim about a day. Only an exact timestamp
    * match counts, so dragging (which lands on arbitrary times) is unaffected.
    */
-  private scrubberX(currentTimestamp: Date, placed: PlacedEvent[]): number {
-    const selectedRing = placed.find(
+  private selectedRing(currentTimestamp: Date, placed: PlacedEvent[]): PlacedEvent | undefined {
+    return placed.find(
       (p) =>
         this.isMonthOnly(p.event) &&
         p.event.siteId === this.highlightedSiteId &&
         p.event.date.getTime() === currentTimestamp.getTime()
     );
-    return selectedRing ? selectedRing.cx : this.timeScale(currentTimestamp);
   }
 
   /**
-   * Render the scrubber (vertical line + draggable handle)
+   * Render the scrubber (vertical line + the drag hit-area over it)
    */
   private renderScrubber(currentTimestamp: Date, placed: PlacedEvent[]) {
-    const { scrubberRadius, colors } = this.config;
+    const { scrubberHitWidth, colors } = this.config;
 
     const scrubberGroup = this.svg.append("g").attr("class", "scrubber-group");
 
-    const xPosition = this.scrubberX(currentTimestamp, placed);
+    const ring = this.selectedRing(currentTimestamp, placed);
+    const xPosition = ring ? ring.cx : this.timeScale(currentTimestamp);
 
     // Spans the full stack so the playhead crosses every dot, not just row 0
     scrubberGroup
       .append("line")
       .attr("class", "scrubber-line")
       .attr("x1", xPosition)
-      .attr("y1", 2)
+      .attr("y1", DATE_PILL_BAND)
       .attr("x2", xPosition)
       .attr("y2", this.baselineY)
       .attr("stroke", colors.scrubberLine)
       .attr("stroke-width", 2);
 
+    // Invisible hit-area over the whole line, not a knob at its foot: the line is
+    // what reads as the playhead, so that is what people aim at. Kept narrow —
+    // it sits above the dots, and anything wider swallows their hover and click.
     const handle = scrubberGroup
-      .append("circle")
+      .append("rect")
       .attr("class", "scrubber-handle")
-      .attr("cx", xPosition)
-      .attr("cy", this.baselineY)
-      .attr("r", scrubberRadius)
-      .attr("fill", colors.scrubberHandle)
-      // No stroke: with the event dots down at r2, a ringed handle was the
-      // heaviest mark on the strip. A playhead should not outweigh the data.
+      .attr("x", xPosition - scrubberHitWidth / 2)
+      .attr("y", 0)
+      .attr("width", scrubberHitWidth)
+      .attr("height", this.baselineY)
+      .attr("fill", "transparent")
       .style("cursor", "grab");
 
-    // Native tooltip, same as the event dots: the date is on hover, not always on.
     handle.append("title").text(utcFormat("%B %d, %Y")(currentTimestamp));
 
-    const dragBehavior = drag<SVGCircleElement, unknown>()
-      .on("start", function () {
-        select(this)
-          .style("cursor", "grabbing")
-          .transition()
-          .duration(100)
-          .attr("r", scrubberRadius + 2)
-          .style("filter", "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))");
+    // The selected date, always on and riding the playhead. A month-only
+    // selection prints its month: the pill must never claim a day the sources
+    // don't give.
+    const label = ring
+      ? utcFormat("%b %Y")(currentTimestamp)
+      : utcFormat("%b %d, %Y")(currentTimestamp);
+
+    const [rangeStart, rangeEnd] = this.timeScale.range();
+    // Clamped to the scale's range, which is inset from the SVG edges by the
+    // margin, so a pill centred at either end still fits on screen.
+    const pillCx = Math.max(rangeStart, Math.min(rangeEnd, xPosition));
+
+    const pill = scrubberGroup
+      .append("g")
+      .attr("class", "scrubber-date-label")
+      .style("pointer-events", "none");
+
+    // Append text first at a placeholder position so getBBox can measure it,
+    // then size and place the rect behind it. jsdom / detached SVGs return 0
+    // width — fall back to the character-count heuristic in that case.
+    const text = pill
+      .append("text")
+      .attr("x", pillCx)
+      .attr("y", DATE_PILL_BAND / 2)
+      .attr("dominant-baseline", "central")
+      .attr("text-anchor", "middle")
+      .attr("font-size", "11px")
+      .attr("font-weight", "600")
+      .attr("fill", "#ffffff")
+      .text(label);
+
+    let measuredWidth = 0;
+    try {
+      measuredWidth = text.node()?.getBBox().width ?? 0;
+    } catch {
+      measuredWidth = 0;
+    }
+    const pillW = (measuredWidth > 0 ? measuredWidth : label.length * 6.4) + 14;
+
+    // insert() places the rect BEFORE the text in DOM order, so text stays on top.
+    pill
+      .insert("rect", "text")
+      .attr("x", pillCx - pillW / 2)
+      .attr("y", (DATE_PILL_BAND - DATE_PILL_H) / 2)
+      .attr("width", pillW)
+      .attr("height", DATE_PILL_H)
+      .attr("rx", 3)
+      .attr("fill", colors.scrubberLine);
+
+    const dragBehavior = drag<SVGRectElement, unknown>()
+      .on("start", () => {
+        handle.style("cursor", "grabbing");
       })
       .on("drag", (event) => {
         const x = Math.max(
           this.timeScale.range()[0],
           Math.min(this.timeScale.range()[1], event.x)
         );
-        const newDate = this.timeScale.invert(x);
 
-        this.onTimestampChange(newDate);
+        const nearest = nearestPlaced(placed, x);
+        if (!nearest) return;
+
+        this.onTimestampChange(nearest.event.date);
+        this.onSiteHighlight?.(nearest.event);
       })
       .on("end", function () {
-        select(this)
-          .style("cursor", "grab")
-          .transition()
-          .duration(200)
-          .attr("r", scrubberRadius)
-          .style("filter", "none");
+        select(this).style("cursor", "grab");
       });
+
 
     handle.on("mousedown", () => {
       this.onPause();

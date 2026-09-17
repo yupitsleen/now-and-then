@@ -16,6 +16,9 @@ interface TableRowProps {
   onSiteHighlight?: (siteId: string | null) => void;
   rowRef?: React.RefObject<HTMLTableRowElement | null>;
   clickableRow?: boolean; // If true, entire row opens site detail (for Data page)
+  /** Timeline pattern: first row click highlights, then the name becomes a button
+   *  to open the detail. Without it, the name is always clickable when onSiteClick is set. */
+  nameClickOnlyWhenHighlighted?: boolean;
 }
 
 /**
@@ -31,7 +34,10 @@ export function TableRow({
   onSiteHighlight,
   rowRef,
   clickableRow = false,
+  nameClickOnlyWhenHighlighted = false,
 }: TableRowProps) {
+  const nameIsButton =
+    !!onSiteClick && (!nameClickOnlyWhenHighlighted || clickableRow || isHighlighted);
   const { isDark } = useTheme();
   const t = useThemeClasses();
   const translate = useTranslation();
@@ -85,11 +91,12 @@ export function TableRow({
       )}
       {visibleColumns.has("name") && (
         <td className={`pl-2 pr-1 ${COMPACT_TABLE.cellY}`}>
-          {onSiteClick ? (
+          {nameIsButton ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onSiteClick(site);
+                // nameIsButton implies onSiteClick is truthy
+                onSiteClick!(site);
               }}
               className="text-left w-full hover:underline"
             >

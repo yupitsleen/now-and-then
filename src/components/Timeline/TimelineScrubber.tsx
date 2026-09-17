@@ -164,7 +164,7 @@ export function TimelineScrubber({
           onTimestampChange: setTimestamp,
           onPause: pause,
           onSiteHighlight: onSiteHighlight ? (event) => {
-            // Highlight the site when timeline dot is clicked
+            // Highlight the site when a timeline dot is clicked or dragged to
             onSiteHighlight(event.siteId);
           } : undefined,
         }
@@ -204,57 +204,6 @@ export function TimelineScrubber({
       advancedMode.onReset();
     }
   }, [reset, onSiteHighlight, advancedMode]);
-
-  // Keyboard controls
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case " ": // Space - play/pause
-          e.preventDefault();
-          if (isPlaying) {
-            pause();
-          } else {
-            play();
-          }
-          break;
-        case "ArrowLeft": // Step backward by 1 day
-          e.preventDefault();
-          pause();
-          setTimestamp(
-            new Date(currentTimestamp.getTime() - 24 * 60 * 60 * 1000)
-          );
-          break;
-        case "ArrowRight": // Step forward by 1 day
-          e.preventDefault();
-          pause();
-          setTimestamp(
-            new Date(currentTimestamp.getTime() + 24 * 60 * 60 * 1000)
-          );
-          break;
-        case "Home": // Jump to start
-          e.preventDefault();
-          pause();
-          handleReset();
-          break;
-        case "End": // Jump to end
-          e.preventDefault();
-          pause();
-          setTimestamp(endDate);
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    currentTimestamp,
-    isPlaying,
-    play,
-    pause,
-    handleReset,
-    setTimestamp,
-    endDate,
-  ]);
 
   // Nav (and the Reset button it hosts) only render in advanced mode
   const showNavigation = !!advancedMode && advancedMode.showNavigation !== false;
@@ -344,7 +293,7 @@ export function TimelineScrubber({
   const canGoPrevious = !!advancedMode && currentEventIndex >= 0;
   const canGoNext = !!advancedMode && destructionDates.length > 0 && currentEventIndex < destructionDates.length - 1;
 
-  const goToPreviousEvent = () => {
+  const goToPreviousEvent = useCallback(() => {
     if (canGoPrevious) {
       if (currentEventIndex === 0) {
         // At first event, go back to timeline start (before first event)
@@ -362,9 +311,9 @@ export function TimelineScrubber({
         }
       }
     }
-  };
+  }, [canGoPrevious, currentEventIndex, destructionDates, setTimestamp, startDate, onSiteHighlight]);
 
-  const goToNextEvent = () => {
+  const goToNextEvent = useCallback(() => {
     if (canGoNext) {
       // If we're before all events (index -1), go to first event (index 0)
       const targetIndex = currentEventIndex === -1 ? 0 : currentEventIndex + 1;
@@ -374,7 +323,62 @@ export function TimelineScrubber({
         onSiteHighlight(nextEvent.siteId);
       }
     }
-  };
+  }, [canGoNext, currentEventIndex, destructionDates, setTimestamp, onSiteHighlight]);
+
+  // Keyboard controls — defined after goToPrev/Next so the effect closure can call them
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't hijack space/arrows when the user is typing in a form field.
+      const target = e.target as HTMLElement | null;
+      if (
+        target?.closest?.("input, textarea, select, [contenteditable=true]")
+      ) {
+        return;
+      }
+      switch (e.key) {
+        case " ": // Space - play/pause
+          e.preventDefault();
+          if (isPlaying) {
+            pause();
+          } else {
+            play();
+          }
+          break;
+        case "ArrowLeft": // Step to previous event (site)
+          e.preventDefault();
+          pause();
+          goToPreviousEvent();
+          break;
+        case "ArrowRight": // Step to next event (site)
+          e.preventDefault();
+          pause();
+          goToNextEvent();
+          break;
+        case "Home": // Jump to start
+          e.preventDefault();
+          pause();
+          handleReset();
+          break;
+        case "End": // Jump to end
+          e.preventDefault();
+          pause();
+          setTimestamp(endDate);
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isPlaying,
+    play,
+    pause,
+    handleReset,
+    setTimestamp,
+    endDate,
+    goToPreviousEvent,
+    goToNextEvent,
+  ]);
 
   return (
     <div
@@ -385,7 +389,7 @@ export function TimelineScrubber({
       {/* Controls sit above the track so the track keeps the full card width */}
       {/* dir="ltr" keeps media controls left-to-right regardless of language */}
       {/* min-h holds the row steady whether the caption wraps to one line or two */}
-      <div className="flex min-h-[2.25rem] items-center gap-4" dir="ltr">
+      <div className="relative flex min-h-[2.25rem] items-center gap-4" dir="ltr">
         {/* Transport: reset, play/pause, then step back/forward — one group, so
             stepping through events doesn't send the pointer across the card */}
         {/* ponytail: indent past the tab strip the Timeline page overlays on this
@@ -421,9 +425,11 @@ export function TimelineScrubber({
           )}
         </div>
 
-        {/* The card's label, reading after the controls it belongs to. */}
-        {/* ponytail: theme text, not literal white — the card is white in light mode */}
-        <div className="min-w-0 flex-1">
+        {/* ponytail: absolute-centered on the card, same strategy as WaybackSlider's
+            header. Controls (left) and InfoIcon (right) sit above it in the flex row;
+            pointer-events-none keeps it from eating their clicks. */}
+        <div className="min-w-0 flex-1" />
+        <div className="pointer-events-none absolute inset-x-0 mx-auto w-fit max-w-full px-2 text-center">
           <p className={`truncate text-sm font-semibold leading-tight ${t.text.heading}`}>
             Timeline of destructive assaults on culturally significant sites
           </p>

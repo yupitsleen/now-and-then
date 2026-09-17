@@ -138,9 +138,6 @@ export const en: Translations = {
     tabImagery: "Imagery",
     tabSites: "Sites",
     advancedSettings: "Advanced Settings",
-    showImagerySlider: "Show Imagery Slider",
-    showImagerySliderTooltip:
-      "Add the satellite imagery slider alongside the site timeline",
     darkMode: "Dark Mode",
     language: "Language",
   },

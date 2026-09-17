@@ -4,6 +4,7 @@ import {
   D3TimelineRenderer,
   DEFAULT_TIMELINE_CONFIG,
   withMarkDates,
+  nearestPlaced,
   type TimelineEvent,
 } from "./d3Timeline";
 
@@ -53,8 +54,14 @@ function render(events: TimelineEvent[], at: Date = DOMAIN_START, highlighted: s
       cy: Number(c.getAttribute("cy")),
       title: c.querySelector("title")?.textContent ?? "",
     })),
-    handleCx: Number(svg.querySelector(".scrubber-handle")?.getAttribute("cx")),
+    // The hit-area is a rect straddling the line, so its centre is the playhead x.
+    handleCx: (() => {
+      const hit = svg.querySelector(".scrubber-handle");
+      return Number(hit?.getAttribute("x")) + Number(hit?.getAttribute("width")) / 2;
+    })(),
     lineX: Number(svg.querySelector(".scrubber-line")?.getAttribute("x1")),
+    dateLabel: svg.querySelector(".scrubber-date-label text")?.textContent ?? "",
+    dateLabelX: Number(svg.querySelector(".scrubber-date-label text")?.getAttribute("x")),
   };
 }
 
@@ -261,5 +268,51 @@ describe("withMarkDates", () => {
     expect([...marks].sort((a, b) => a - b)).toEqual(marks);
     // The Nov 20 event still sorts after the rings placed earlier in the month.
     expect(order.indexOf("late")).toBeGreaterThan(order.indexOf("ring0"));
+  });
+});
+
+describe("nearestPlaced", () => {
+  const at = (cx: number) => ({
+    event: { siteId: `s${cx}`, siteName: `Site ${cx}`, date: new Date(Date.UTC(2023, 9, 7)) },
+    cx,
+    cy: 0,
+  });
+
+  it("snaps to the closest dot, on either side", () => {
+    const placed = [at(10), at(100), at(300)];
+
+    expect(nearestPlaced(placed, 96)?.cx).toBe(100);
+    expect(nearestPlaced(placed, 140)?.cx).toBe(100);
+    expect(nearestPlaced(placed, 400)?.cx).toBe(300);
+  });
+
+  it("returns null when there is nothing to snap to", () => {
+    expect(nearestPlaced([], 50)).toBeNull();
+  });
+});
+
+describe("playhead date label", () => {
+  beforeEach(() => {
+    document.body.replaceChildren();
+  });
+
+  it("prints the selected date and rides the playhead", () => {
+    const events = [makeEvent("2023-10-15", "a"), makeEvent("2023-11-20", "b")];
+
+    const first = render(events, events[0].date);
+    expect(first.dateLabel).toBe("Oct 15, 2023");
+    expect(first.dateLabelX).toBe(first.lineX);
+
+    // Selecting the other site moves both the text and the pill.
+    const second = render(events, events[1].date, "b");
+    expect(second.dateLabel).toBe("Nov 20, 2023");
+    expect(second.dateLabelX).toBe(second.lineX);
+    expect(second.dateLabelX).toBeGreaterThan(first.dateLabelX);
+  });
+
+  it("prints only the month for a month-only selection", () => {
+    const { dateLabel } = render([makeEvent("2023-11", "a", "month")], new Date("2023-11-01T00:00:00Z"), "a");
+
+    expect(dateLabel).toBe("Nov 2023");
   });
 });

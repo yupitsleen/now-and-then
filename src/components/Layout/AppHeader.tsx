@@ -3,7 +3,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useTranslation } from "../../contexts/LocaleContext";
 import { useNavigate } from "react-router-dom";
 import { Z_INDEX } from "../../constants/layout";
-import { TOOLTIPS } from "../../config/tooltips";
 import logo from "../../assets/HeritageTrackerLogo.png";
 
 /**
@@ -44,10 +43,9 @@ export function AppHeader({
             never covers the toggle button or eats its clicks. */}
         <button
           onClick={() => navigate("/")}
-          className="absolute inset-y-0 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#fefefe]"
+          className="absolute inset-y-0 flex items-center gap-3 cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#fefefe]"
           style={{ left: titleLeft ?? 48 }}
           aria-label="Go to home page"
-          title={TOOLTIPS.HEADER.HOME}
         >
           <img src={logo} alt="" className="h-7 w-auto" />
           {/* The wordmark is split across spans for colour, which leaves screen

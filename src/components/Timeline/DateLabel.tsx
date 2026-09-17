@@ -45,22 +45,45 @@ export function DateLabel({
   const boxClasses = `px-2 py-0.5 ${textColor} ${fontSize} font-semibold rounded whitespace-nowrap shadow-lg`;
   const boxStyle = { backgroundColor, opacity, outline: "1px solid black" };
 
-  // ponytail: native <input type="date"> — picker and keyboard entry for free.
-  // Uncontrolled + keyed: a controlled value re-pushed by an unrelated re-render
-  // resets the open picker back to day view, trapping you in the month/year pane.
-  // The key adopts external date changes (scrubber, snapping) by remounting instead.
+  // Editable labels collapse to a calendar icon: the date itself is on hover
+  // (native title tooltip on the input), so the map isn't shouting a date the
+  // small timeline only whispers.
+  //
+  // ponytail: native <input type="date"> is the actual interactive surface —
+  // clicking anywhere on it opens the picker, tabbing lands on it and typing
+  // works. The calendar SVG sits behind it as pure decoration. Uncontrolled +
+  // keyed: a controlled value re-pushed by an unrelated re-render resets the
+  // open picker back to day view. The key adopts external date changes
+  // (scrubber, snapping) by remounting instead.
   if (onDateChange) {
     return (
-      <input
-        key={date}
-        type="date"
-        aria-label="Imagery date"
-        data-testid={`date-label-${variant}`}
-        className={`${boxClasses} bg-transparent cursor-pointer`}
-        style={{ ...boxStyle, colorScheme: variant === "single" ? "light" : "dark" }}
-        defaultValue={date}
-        onChange={(e) => e.target.value && onDateChange(e.target.value)}
-      />
+      <div
+        className={`relative w-7 h-7 rounded shadow-lg ${textColor} focus-within:outline focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-black`}
+        style={boxStyle}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="absolute inset-0 m-auto w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          aria-hidden="true"
+        >
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <path d="M3 10h18M8 3v4M16 3v4" />
+        </svg>
+        <input
+          key={date}
+          type="date"
+          title={date}
+          aria-label={`Imagery date: ${date}`}
+          data-testid={`date-label-${variant}`}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          style={{ colorScheme: variant === "single" ? "light" : "dark" }}
+          defaultValue={date}
+          onChange={(e) => e.target.value && onDateChange(e.target.value)}
+        />
+      </div>
     );
   }
 

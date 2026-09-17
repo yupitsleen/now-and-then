@@ -1,10 +1,19 @@
 import { TILE_CONFIGS } from "../constants/map";
 
+interface TileConfigOptions {
+  /** When "dark", returns the dark basemap regardless of language. */
+  theme?: "light" | "dark";
+}
+
 /**
- * Custom hook to get tile configuration based on browser language
- * Returns Arabic tiles for Arabic browsers, English tiles otherwise
+ * Tile configuration for the map. Arabic browsers get OSM Arabic tiles;
+ * everyone else gets the CartoDB light basemap. Pass { theme: "dark" } to
+ * force the dark basemap — used by MiniMap where the pick is automatic
+ * (MapTileLayers still exposes light/dark as a user-toggleable layer).
  */
-export const useTileConfig = () => {
+export const useTileConfig = (options: TileConfigOptions = {}) => {
+  if (options.theme === "dark") return TILE_CONFIGS.dark;
+
   const browserLang = navigator.language || navigator.languages?.[0] || "en";
   const isArabic = browserLang.startsWith("ar");
 

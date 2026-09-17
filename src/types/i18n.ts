@@ -168,8 +168,6 @@ export interface Translations {
     tabImagery: string;
     tabSites: string;
     advancedSettings: string;
-    showImagerySlider: string;
-    showImagerySliderTooltip: string;
     darkMode: string;
     language: string;
   };

@@ -43,6 +43,9 @@ const TimelineScrubber = lazy(() =>
 const SiteDetailPanel = lazy(() =>
   import("../components/SiteDetail/SiteDetailPanel").then((m) => ({ default: m.SiteDetailPanel }))
 );
+const MiniMap = lazy(() =>
+  import("../components/Map/MiniMap").then((m) => ({ default: m.MiniMap }))
+);
 
 /** Default "before" imagery baseline — pre-destruction reference point */
 const WAYBACK_BASELINE_DATE = new Date("2019-06-05");
@@ -131,8 +134,6 @@ export function Timeline() {
   // Modal states for footer and help
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  // Imagery slider on by default; turning it off in Advanced Settings leaves no tabs.
-  const [showImagerySlider, setShowImagerySlider] = useState(true);
   // View option: tabs (default) vs. both timelines stacked, as they used to be
   const [separateTimelines, setSeparateTimelines] = useState(false);
   const [timelineTab, setTimelineTab] = useState<"imagery" | "sites">("sites");
@@ -171,9 +172,9 @@ export function Timeline() {
       }
     : undefined;
 
-  // Three layouts: sites only (default), tabbed, stacked.
-  const stacked = showImagerySlider && separateTimelines;
-  const tabbed = showImagerySlider && !separateTimelines;
+  // Two layouts: tabbed (default) or stacked.
+  const stacked = separateTimelines;
+  const tabbed = !separateTimelines;
 
   // Tabbed mode: both panels fill the shared grid cell (h-full on the panel's own
   // bordered container too), so the visible box is identical on either tab.
@@ -428,10 +429,12 @@ export function Timeline() {
                     <SitesTable
                       embedded
                       sites={filteredSites}
+                      onSiteClick={setSelectedSite}
                       onSiteTypeClick={setSelectedSite}
                       onSiteHighlight={handleSiteHighlight}
                       highlightedSiteId={highlightedSiteId}
                       visibleColumns={tableResize.getVisibleColumns()}
+                      nameClickOnlyWhenHighlighted
                     />
                   }
                   settings={
@@ -447,8 +450,6 @@ export function Timeline() {
                       onBeforeIndexChange={setBeforeReleaseIndex}
                       afterIndex={currentReleaseIndex}
                       onAfterIndexChange={setCurrentReleaseIndex}
-                      showImagerySlider={showImagerySlider}
-                      onShowImagerySliderToggle={() => setShowImagerySlider(!showImagerySlider)}
                       separateTimelines={separateTimelines}
                       onSeparateTimelinesToggle={() => setSeparateTimelines(!separateTimelines)}
                       onOpenHelp={() => setIsHelpOpen(true)}
@@ -542,12 +543,31 @@ export function Timeline() {
                 </div>
               </div>
 
+            {/* Bottom row: mini locator map + timeline panels */}
+            <div className="flex-shrink-0 flex gap-2 relative z-10" inert={tableExpanded}>
+              {/* Mini overview map — same width as the sidebar */}
+              {!sidebarRailed && (
+                <div
+                  className={`flex-shrink-0 ${t.border.primary2} rounded shadow-xl overflow-hidden`}
+                  style={{ width: sidebarWidth }}
+                >
+                  <Suspense fallback={<SkeletonMap />}>
+                    <MiniMap
+                      highlightedSite={
+                        highlightedSiteId
+                          ? filteredSites.find((s) => s.id === highlightedSiteId) ?? null
+                          : null
+                      }
+                    />
+                  </Suspense>
+                </div>
+              )}
+
             {/* Combined panel: tabs sit inside the panel's top-left corner. The
                 `timeline-tabbed` class tells the panels' control rows to indent past
                 the tablist. Hidden when the user opts into the stacked layout. */}
             <div
-              className={`flex-shrink-0 flex flex-col gap-2 relative z-10 ${tabbed ? "timeline-tabbed" : ""}`}
-              inert={tableExpanded}
+              className={`flex-1 min-w-0 flex flex-col gap-2 relative ${tabbed ? "timeline-tabbed" : ""}`}
             >
             {tabbed && (
               <div
@@ -613,26 +633,25 @@ export function Timeline() {
                 </Suspense>
               </div>
 
-              {showImagerySlider && (
-                <div
-                  {...timelinePanelProps("imagery")}
-                  className={`${tabPanelClass} ${tabbed ? "absolute inset-0" : ""} ${
-                    tabbed && timelineTab !== "imagery"
-                      ? "invisible pointer-events-none"
-                      : ""
-                  }`}
-                >
-                  <WaybackSlider
-                    releases={releases}
-                    currentIndex={currentReleaseIndex}
-                    onIndexChange={setCurrentReleaseIndex}
-                    mapsInsetPx={sidebarWidth + CONTENT_GAP_PX}
-                    comparisonMode={comparisonModeEnabled}
-                    beforeIndex={beforeReleaseIndex}
-                    onBeforeIndexChange={setBeforeReleaseIndex}
-                  />
-                </div>
-              )}
+              <div
+                {...timelinePanelProps("imagery")}
+                className={`${tabPanelClass} ${tabbed ? "absolute inset-0" : ""} ${
+                  tabbed && timelineTab !== "imagery"
+                    ? "invisible pointer-events-none"
+                    : ""
+                }`}
+              >
+                <WaybackSlider
+                  releases={releases}
+                  currentIndex={currentReleaseIndex}
+                  onIndexChange={setCurrentReleaseIndex}
+                  mapsInsetPx={sidebarRailed ? sidebarWidth + CONTENT_GAP_PX : 0}
+                  comparisonMode={comparisonModeEnabled}
+                  beforeIndex={beforeReleaseIndex}
+                  onBeforeIndexChange={setBeforeReleaseIndex}
+                />
+              </div>
+            </div>
             </div>
             </div>
 

@@ -1,7 +1,8 @@
 // Live-link check for every source URL in mockSites.ts.
 // Network-dependent by design, so it is NOT part of the vitest suite — run on demand
-// (npm run test:links) or on a schedule. Exit 1 on dead links (404/5xx/network failure);
-// 403s are reported but tolerated (bot-blocking that works in a browser).
+// (npm run test:links) or on a schedule. Exit 1 on dead links (404/5xx, or a network
+// failure that survives a retry); 403/429 are reported but tolerated (bot-blocking and
+// rate-limiting that a real browser gets past).
 import { mockSites } from "../src/data/mockSites.ts";
 
 const urls = new Map(); // url -> [siteIds]
@@ -14,7 +15,7 @@ for (const site of mockSites) {
   }
 }
 
-const check = async (url) => {
+const attempt = async (url) => {
   const opts = {
     redirect: "follow",
     signal: AbortSignal.timeout(15000),
@@ -28,6 +29,14 @@ const check = async (url) => {
   } catch (err) {
     return `FAIL: ${err.cause?.code ?? err.name}`;
   }
+};
+
+// A slow or throttled host from a CI runner is not a dead link: retry once before believing it.
+const check = async (url) => {
+  const first = await attempt(url);
+  if (typeof first === "number") return first;
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return attempt(url);
 };
 
 const entries = [...urls.entries()];
@@ -46,9 +55,10 @@ let blocked = 0;
 for (const [url, ids, status] of results) {
   if (status === 200 || (typeof status === "number" && status < 400)) continue;
   const cited = ids.slice(0, 3).join(", ") + (ids.length > 3 ? ` +${ids.length - 3} more` : "");
-  if (status === 403) {
+  // 403 = bot-blocked, 429 = rate-limited. Both mean "the host refused us", not "the page is gone".
+  if (status === 403 || status === 429) {
     blocked++;
-    console.log(`  BLOCKED 403 (verify in browser): ${url}  [${cited}]`);
+    console.log(`  BLOCKED ${status} (verify in browser): ${url}  [${cited}]`);
   } else {
     dead++;
     console.log(`  DEAD ${status}: ${url}  [${cited}]`);
