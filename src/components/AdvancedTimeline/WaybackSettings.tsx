@@ -142,8 +142,8 @@ export function WaybackSettings({
         />
       )}
 
-      {/* ponytail: native <details> — collapsed by default, no state, no lib. */}
-      <details className="mt-1">
+      {/* ponytail: native <details> — open by default, no state, no lib. */}
+      <details className="mt-1" open>
         <summary
           className={`text-sm font-semibold cursor-pointer ${t.text.heading}`}
         >
