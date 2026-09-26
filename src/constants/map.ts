@@ -56,25 +56,27 @@ export const MARKER_CLASSNAMES = {
 /**
  * Tile layer configurations for different languages
  */
+const OSM_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const OSM_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+// ponytail: CARTO killed unauthenticated tiles (watermark "API KEY REQUIRED").
+// All configs now use OSM; dark mode is OSM + CSS invert filter on the tile pane.
 export const TILE_CONFIGS = {
   arabic: {
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: undefined,
+    url: OSM_URL,
+    attribution: OSM_ATTRIBUTION,
+    subdomains: "abc",
   },
   english: {
-    url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
+    url: OSM_URL,
+    attribution: OSM_ATTRIBUTION,
+    subdomains: "abc",
   },
   dark: {
-    // {r} → "@2x" on HiDPI screens; without it dark tiles render at half resolution
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
+    url: OSM_URL,
+    attribution: OSM_ATTRIBUTION,
+    subdomains: "abc",
   },
 } as const;
 

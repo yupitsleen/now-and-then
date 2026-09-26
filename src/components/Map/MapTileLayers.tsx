@@ -1,21 +1,27 @@
-import { TileLayer, LayersControl } from "react-leaflet";
+import { useEffect } from "react";
+import { TileLayer, LayersControl, useMap } from "react-leaflet";
 import { useTileConfig } from "../../hooks/useTileConfig";
 import { useTheme } from "../../contexts/ThemeContext";
 import { TILE_CONFIGS } from "../../constants/map";
 
-/**
- * MapTileLayers - Configures map tile layers with street/dark toggle
- * - Street Map: OpenStreetMap (Arabic or English based on browser language)
- * - Dark Map: CartoDB Dark Matter (optimized for data visualization)
- * - Automatically selects appropriate map based on theme
- */
-export function MapTileLayers() {
+// ponytail: CSS invert on OSM tiles → dark basemap without a paid tile provider
+const DARK_FILTER = "invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9)";
+
+function DarkTileFilter({ active }: { active: boolean }): null {
+  const map = useMap();
+  useEffect(() => {
+    const pane = map.getPane("tilePane");
+    if (pane) pane.style.filter = active ? DARK_FILTER : "";
+  }, [map, active]);
+  return null;
+}
+
+export function MapTileLayers(): React.JSX.Element {
   const tileConfig = useTileConfig();
   const { isDark } = useTheme();
 
   return (
     <LayersControl position="topright">
-      {/* Street Map (Default in light mode) */}
       <LayersControl.BaseLayer checked={!isDark} name="Street Map">
         <TileLayer
           attribution={tileConfig.attribution}
@@ -24,7 +30,6 @@ export function MapTileLayers() {
         />
       </LayersControl.BaseLayer>
 
-      {/* Dark Map (Default in dark mode) - CartoDB Dark Matter */}
       <LayersControl.BaseLayer checked={isDark} name="Dark Map">
         <TileLayer
           attribution={TILE_CONFIGS.dark.attribution}
@@ -33,6 +38,7 @@ export function MapTileLayers() {
           maxZoom={19}
         />
       </LayersControl.BaseLayer>
+      <DarkTileFilter active={isDark} />
     </LayersControl>
   );
 }

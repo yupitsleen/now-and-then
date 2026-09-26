@@ -1,13 +1,15 @@
 import { memo, useEffect } from "react";
 import { MapContainer, TileLayer, CircleMarker, useMap } from "react-leaflet";
 import type { Site } from "../../types";
-import { GAZA_CENTER } from "../../constants/map";
 import { useTileConfig } from "../../hooks/useTileConfig";
 import { useTheme } from "../../contexts/ThemeContext";
 import "leaflet/dist/leaflet.css";
 
-// ponytail: zoom 8.5 fits all of Gaza + Rafah in the tiny container
+// ponytail: shifted east from GAZA_CENTER to reduce sea; zoom 8.5 fits full strip
+const MINIMAP_CENTER: [number, number] = [31.40, 34.40];
 const MINI_MAP_ZOOM = 8.5;
+const LIGHT_FILTER = "grayscale(1) brightness(1.05) contrast(0.9)";
+const DARK_FILTER = "grayscale(1) invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9)";
 
 interface MiniMapProps {
   /** The resolved highlighted site, or null. Passed in already-looked-up so
@@ -16,7 +18,6 @@ interface MiniMapProps {
   highlightedSite: Site | null;
 }
 
-/** Tells Leaflet to recalculate when the container resizes (e.g. stacked timelines). */
 function InvalidateOnResize(): null {
   const map = useMap();
 
@@ -30,6 +31,15 @@ function InvalidateOnResize(): null {
   return null;
 }
 
+function TileFilter({ isDark }: { isDark: boolean }): null {
+  const map = useMap();
+  useEffect(() => {
+    const pane = map.getPane("tilePane");
+    if (pane) pane.style.filter = isDark ? DARK_FILTER : LIGHT_FILTER;
+  }, [map, isDark]);
+  return null;
+}
+
 /**
  * Small, non-interactive overview map showing Gaza with a single marker
  * for the currently highlighted site.
@@ -40,7 +50,7 @@ export const MiniMap = memo(function MiniMap({ highlightedSite }: MiniMapProps) 
 
   return (
     <MapContainer
-      center={GAZA_CENTER}
+      center={MINIMAP_CENTER}
       zoom={MINI_MAP_ZOOM}
       scrollWheelZoom={false}
       dragging={false}
@@ -55,6 +65,7 @@ export const MiniMap = memo(function MiniMap({ highlightedSite }: MiniMapProps) 
     >
       <TileLayer url={tileConfig.url} subdomains={tileConfig.subdomains} />
       <InvalidateOnResize />
+      <TileFilter isDark={isDark} />
       {highlightedSite && (
         <CircleMarker
           center={highlightedSite.coordinates}
