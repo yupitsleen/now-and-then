@@ -192,7 +192,7 @@ This is the **core control** of the Timeline page. It lets you select from 186 s
 
 ## Site Timeline - Destruction Events
 
-This is the **same timeline** you see on the Dashboard page, but with special integration.
+The site timeline is the app's landing view; the comparison controls below hook into it.
 
 ### What It Shows
 
@@ -368,7 +368,6 @@ Let's investigate a real destruction event step by step.
 **Site Timeline (bottom):**
 - Shows when **sites were destroyed**
 - Red dots are destruction events
-- Same timeline as Dashboard page
 
 ### "Why does 'Sync map on dot click' sometimes jump to unexpected dates?"
 
@@ -517,7 +516,7 @@ Each map has two toggles in the **bottom-left corner**:
 ### Researchers
 
 **Data Collection:**
-1. Systematically go through all sites (Use Data page for export)
+1. Systematically go through all sites (export via the filter bar's CSV/JSON/GeoJSON buttons)
 2. For each destroyed site:
    - Enable Comparison Mode
    - Find clearest before/after imagery
@@ -679,38 +678,6 @@ Each map has two toggles in the **bottom-left corner**:
 
 ---
 
-## Next Steps
-
-### Explore Other Pages
-
-**Dashboard:**
-- Three-column layout with overview map
-- See [DASHBOARD_TUTORIAL.md](./DASHBOARD_TUTORIAL.md)
-
-**Data Page:**
-- Full-screen table with all fields
-- Export to CSV/JSON/GeoJSON
-- Advanced sorting
-
-**Stats Page:**
-- Charts and graphs
-- Destruction trends over time
-- Breakdown by type and status
-
-### Learn More
-
-**About the Project:**
-- Click "About" in navigation bar
-- Learn about data sources
-- Understand verification process
-
-**Provide Feedback:**
-- Found an error in site data?
-- Have suggestions?
-- Contact via About page
-
----
-
 ## Key Takeaways
 
 **Remember:**
@@ -753,5 +720,4 @@ This tool documents **real destruction** of cultural heritage sites.
 
 ---
 
-*Last updated: November 2025*
-*For Dashboard tutorial, see [DASHBOARD_TUTORIAL.md](./DASHBOARD_TUTORIAL.md)*
+*Last updated: 2026-09-26 (post single-page-app cleanup)*

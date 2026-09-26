@@ -4,6 +4,11 @@
 
 **Status:** Live. Quick wins done; the safety net is now built **per redesign area, just-in-time** (see "How we actually work" below). Filters are covered; every other area is still thin.
 
+**Post-cleanup note (2026-09-26):** the app is now a single-page landing (Timeline).
+Dashboard, Data, Donate, About, and resources pages were deleted (e9801a5). Rows and
+paragraphs below that reference `/dashboard` or `/data` are historical context for how
+the test scaffolding evolved — treat them as archaeology, not current routes.
+
 ---
 
 ## The one idea this plan is built on
@@ -100,9 +105,8 @@ Each row is a user journey driven by roles/text, asserting an observable state c
 | Workflow | What a redesign can silently break | Assert (observable) | Today |
 |---|---|---|---|
 | **Apply a type filter** | Filter control moves into a drawer/menu; wiring lost | Result count / visible rows actually change | ✅ `filters.spec.ts` |
-| **Apply year range** | Slider/inputs restyled | Result count changes on `/data` | ✅ `filters.spec.ts` (regression for the inline-filter bug) |
-| **Apply destruction-date range** | Date inputs restyled | Result count changes on `/data` | ✅ `filters.spec.ts` |
-| **Sidebar layout preference persists** | Toggle/localStorage wiring lost | Sidebar survives a reload on `/dashboard` | ✅ `filters.spec.ts` |
+| **Apply year range** | Slider/inputs restyled | Result count changes on `/` | ✅ `filters.spec.ts` (regression for the inline-filter bug) |
+| **Apply destruction-date range** | Date inputs restyled | Result count changes on `/` | ✅ `filters.spec.ts` |
 | **Facet accordion open/close** | Header markup changes | Facet collapses, content hidden | ✅ `FilterBar.baseline.test.tsx` |
 | **Clear all filters** | Button relocated | Results return to the unfiltered count | ✅ `filters.spec.ts` |
 | **Combine filters (multi)** | Layout reflow | AND-logic result set correct | 🟡 unit only (`useFilteredSites`) |
