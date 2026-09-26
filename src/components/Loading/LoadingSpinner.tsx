@@ -63,7 +63,7 @@ export function LoadingSpinner({
         className={`
           ${sizeClasses[size]}
           border-gray-200
-          border-t-[#009639]
+          border-t-brand
           rounded-full
           animate-spin
         `}

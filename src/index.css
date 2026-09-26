@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Palestinian flag brand tokens — single source of truth for Tailwind classes
+   (text-brand, bg-brand, ring-brand, border-brand, ...). JS/D3/SVG code that
+   needs the raw hex uses COLORS in config/colorThemes.ts; keep the two in sync. */
+@theme {
+  --color-brand: #009639;       /* flag green */
+  --color-brand-hover: #007b2f; /* darker green for hover */
+  --color-flag-red: #ed3039;    /* flag red */
+}
+
 /* Apply Inter font globally */
 * {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
@@ -24,7 +33,7 @@ select:focus-visible,
 textarea:focus-visible,
 [role="button"]:focus-visible,
 [tabindex]:not([tabindex="-1"]):focus-visible {
-  outline: 2px solid #009639;
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -44,7 +53,7 @@ textarea:focus-visible,
 
 /* Focus visible for custom components */
 .focus-ring:focus-visible {
-  outline: 2px solid #009639;
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 

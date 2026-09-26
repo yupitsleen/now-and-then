@@ -192,7 +192,7 @@ export function SitesTableDesktop({
               {onExpandTable && (
                 <button
                   onClick={onExpandTable}
-                  className="text-[#009639] hover:text-[#007b2f] p-1 transition-colors"
+                  className="text-brand hover:text-brand-hover p-1 transition-colors"
                   aria-label={translate("table.expandTable")}
                   title={translate("table.expandTable")}
                 >
@@ -235,7 +235,7 @@ export function SitesTableDesktop({
                   <button
                     autoFocus
                     onClick={onCloseExpanded}
-                    className="text-[#009639] hover:text-[#007b2f] p-1 transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none rounded"
+                    className="text-brand hover:text-brand-hover p-1 transition-colors focus:ring-2 focus:ring-brand focus:outline-none rounded"
                     aria-label={translate("common.close")}
                     title={translate("common.close")}
                   >

@@ -36,8 +36,8 @@ function getTextColor(isDark: boolean, lightText: boolean): string {
 function getVariantClasses(variant: ButtonVariant, isDark: boolean, textColor: string): string {
   const variants: Record<ButtonVariant, string> = {
     primary: isDark
-      ? `bg-transparent text-gray-300 border-gray-600 hover:bg-[${COLORS.FLAG_GREEN}] hover:text-white hover:border-[${PALESTINIAN_FLAG.GREEN}] hover:shadow-lg active:opacity-80`
-      : `bg-transparent ${textColor} border-gray-400 hover:bg-[${COLORS.FLAG_GREEN_HOVER}] hover:text-black hover:border-[${PALESTINIAN_FLAG.GREEN}] hover:shadow-lg active:opacity-80`,
+      ? `bg-transparent text-gray-300 border-gray-600 hover:bg-brand hover:text-white hover:border-brand hover:shadow-lg active:opacity-80`
+      : `bg-transparent ${textColor} border-gray-400 hover:bg-[${COLORS.FLAG_GREEN_HOVER}] hover:text-black hover:border-brand hover:shadow-lg active:opacity-80`,
 
     secondary: isDark
       ? "bg-transparent text-gray-300 border-gray-600 hover:bg-gray-600 hover:text-white hover:border-gray-500 hover:shadow-lg active:opacity-80"

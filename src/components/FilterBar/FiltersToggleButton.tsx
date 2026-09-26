@@ -16,7 +16,7 @@ export function FiltersToggleButton({ onClick, activeFilterCount = 0 }: FiltersT
     <button
       type="button"
       onClick={onClick}
-      className="relative h-full aspect-square flex items-center justify-center text-[#fefefe] hover:bg-white/10 transition-colors focus:ring-2 focus:ring-inset focus:ring-[#009639] focus:outline-none"
+      className="relative h-full aspect-square flex items-center justify-center text-[#fefefe] hover:bg-white/10 transition-colors focus:ring-2 focus:ring-inset focus:ring-brand focus:outline-none"
       aria-label={translate("filters.showFilters")}
       title={translate("filters.showFilters")}
     >

@@ -109,7 +109,7 @@ export function useTableSort<T extends Record<string, any>>(
       return <span className="text-gray-400 ml-1">↕</span>;
     }
     return (
-      <span className="text-[#009639] ml-1">
+      <span className="text-brand ml-1">
         {sortDirection === "asc" ? "↑" : "↓"}
       </span>
     );

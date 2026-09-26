@@ -71,7 +71,7 @@ export function TimeToggle({ selectedPeriod, onPeriodChange, latestReleaseDate }
             }}
             className={`px-3 py-1.5 text-xs font-semibold transition-colors border-r ${t.border.default} last:border-r-0 ${
               selectedPeriod === period.value
-                ? `bg-[#009639] text-white`
+                ? `bg-brand text-white`
                 : `${t.bg.primary} ${t.text.body} ${t.bg.hover}`
             }`}
             title={period.tooltip}

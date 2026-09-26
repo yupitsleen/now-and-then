@@ -68,7 +68,7 @@ export function WaybackSettings({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="w-5 h-5 rounded border-gray-300 text-[#009639] focus:ring-[#009639] cursor-pointer"
+        className="w-5 h-5 rounded border-gray-300 text-brand focus:ring-brand cursor-pointer"
       />
       <span className={`text-sm ${t.text.body}`}>{label}</span>
     </label>
@@ -89,7 +89,7 @@ export function WaybackSettings({
         onChange={() => {
           if (!checked) onSyncMapVersionToggle();
         }}
-        className="w-5 h-5 border-gray-300 text-[#009639] focus:ring-[#009639] cursor-pointer"
+        className="w-5 h-5 border-gray-300 text-brand focus:ring-brand cursor-pointer"
       />
       <span className={`text-sm ${t.text.body}`}>{label}</span>
     </label>
@@ -184,7 +184,7 @@ export function WaybackSettings({
             <button
               type="button"
               onClick={onOpenHelp}
-              className={`flex items-center gap-2 text-sm text-left rounded focus:ring-2 focus:ring-[#009639] focus:outline-none ${t.text.body}`}
+              className={`flex items-center gap-2 text-sm text-left rounded focus:ring-2 focus:ring-brand focus:outline-none ${t.text.body}`}
             >
               <QuestionMarkCircleIcon className="w-5 h-5 flex-none" aria-hidden="true" />
               {translate("common.help")}

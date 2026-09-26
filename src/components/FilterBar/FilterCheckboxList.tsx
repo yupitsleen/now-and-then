@@ -69,7 +69,7 @@ export function FilterCheckboxList<T extends string>({
               type="checkbox"
               checked={isSelected}
               onChange={() => toggleOption(option)}
-              className="w-4 h-4 rounded border-2 text-[#009639] focus:ring-[#009639] focus:ring-2 cursor-pointer"
+              className="w-4 h-4 rounded border-2 text-brand focus:ring-brand focus:ring-2 cursor-pointer"
             />
             <span className={cn("text-sm select-none flex-1", t.text.body)}>
               {formatLabel(option)}

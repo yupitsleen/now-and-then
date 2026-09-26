@@ -46,8 +46,8 @@ export function SiteTableRow({
       className={`transition-colors duration-150 border-b ${t.border.default} ${
         highlightedSiteId === site.id
           ? isDark
-            ? "bg-green-900/40 ring-2 ring-[#009639] ring-inset"
-            : "bg-green-50/60 ring-2 ring-[#009639] ring-inset"
+            ? "bg-green-900/40 ring-2 ring-brand ring-inset"
+            : "bg-green-50/60 ring-2 ring-brand ring-inset"
           : `${t.bg.primary}/50 ${t.bg.hover}`
       } ${clickableRow ? "cursor-pointer" : ""}`}
       onClick={() => {
@@ -67,7 +67,7 @@ export function SiteTableRow({
             }}
             className="text-left w-full hover:underline"
           >
-            <div className="font-semibold text-base text-[#009639] hover:text-[#007b2f]">{site.name}</div>
+            <div className="font-semibold text-base text-brand hover:text-brand-hover">{site.name}</div>
             {site.nameArabic && (
               <div
                 className={`${
