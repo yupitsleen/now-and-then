@@ -12,8 +12,8 @@ created: "2026-05-18"
 
 Palestinian cultural heritage destruction tracker. Single-page React app with 3 interchangeable backend modes selected via `.env` — zero code changes needed to switch.
 
-- **Frontend SPA** — React 19 + Vite, 7 pages, 21 components, 24+ custom hooks
-- **Map Layer** — Leaflet with clustering, satellite/street toggle, ESRI Wayback comparison mode (186 releases)
+- **Frontend SPA** — React 19 + Vite, single-page (one route → Timeline)
+- **Map Layer** — Leaflet with clustering, satellite/street toggle, ESRI Wayback comparison mode
 - **Data Layer** — 3 modes via adapter pattern: Mock (in-memory, default), Local (Express + PostgreSQL 16 + PostGIS), Supabase Cloud
 - **External APIs** — ESRI Wayback (`s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json`) for satellite imagery metadata
 
@@ -67,20 +67,19 @@ State is managed via custom hooks + React Context (no Redux). Components communi
 src/
 ├── api/                 # Backend integration (adapter pattern, 3 modes)
 │   └── adapters/        # MockAdapter, LocalBackendAdapter, SupabaseAdapter
-├── components/          # 21 feature components (co-located tests + types)
+├── components/          # feature components (co-located tests + types)
 │   ├── AdvancedTimeline/ # WaybackSlider, IntervalSelector
 │   ├── Map/             # HeritageMap, ComparisonMapView, SiteDetailView
 │   ├── FilterBar/       # Multi-select filter UI
 │   ├── SitesTable/      # Virtual-scrolling table
 │   └── Layout/          # AppHeader, AppFooter, layouts
-├── pages/               # 7 pages (Dashboard, Timeline, Data, About, Donate, Stats, HowItWorks)
-│   └── resources/       # Pages under Resources dropdown
-├── hooks/               # 24+ custom hooks (useAppState, useFilteredSites, useWaybackReleases…)
+├── pages/               # Timeline.tsx (single-page app — only route is "/")
+├── hooks/               # custom hooks (useAppState, useFilteredSites, useWaybackReleases…)
 ├── contexts/            # ThemeContext, LocaleContext, CalendarContext, AnimationContext
 ├── config/              # 30+ config files (colorThemes, tileLayers, filters, tooltips…)
 ├── constants/           # layout, timeline, map, statistics constants
 ├── i18n/                # Translations: en.ts, ar.ts, it.ts
-├── data/mockSites.ts    # 70 documented heritage sites (2,356 lines)
+├── data/mockSites.ts    # documented heritage sites (source of truth for mock mode + seeds)
 ├── types/               # TypeScript definitions (Site, FilterState, 30+ type files)
 └── utils/               # formatters, exporters, calculations, validators
 

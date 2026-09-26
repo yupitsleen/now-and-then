@@ -57,8 +57,7 @@ src/
 │   └── database.types.ts  # Auto-generated Supabase types
 ├── components/     # Feature components (Map/, Timeline/, AdvancedTimeline/,
 │                   #   FilterBar/, SitesTable/, Layout/, Icons/, shared UI)
-├── pages/          # DashboardPage, Timeline, DataPage, AboutPage, DonatePage,
-│   └── resources/  # Education, Legal, Media, Organizations, Research, Trackers
+├── pages/          # Timeline.tsx — single-page app, only route is "/"
 ├── hooks/          # useAppState, useFilteredSites, useWaybackReleases,
 │                   #   useSitesQuery, useTimelineData, useDebounce, ...
 ├── contexts/       # Animation, Calendar (Gregorian/Islamic), Locale, Theme
@@ -146,7 +145,7 @@ interface Site {
 
 **New site:** add to `src/data/mockSites.ts` with sources + Arabic name; run tests.
 **New filter:** `src/config/filters.ts` → `src/types/filters.ts` → `src/hooks/useFilteredSites.ts` → `src/components/FilterBar/`.
-**New page:** `src/pages/` (or `pages/resources/` + its `index.ts`) → route in `App.tsx` → nav in `Layout/AppHeader.tsx` or `ResourcesDropdown.tsx` → i18n in `en.ts`/`ar.ts`/`it.ts` → tests.
+**New feature/section:** app is single-page (one route in `App.tsx` → `Timeline`); add UI as a component under `src/components/`, wire i18n in `en.ts`/`ar.ts`/`it.ts`, add tests.
 
 ---
 

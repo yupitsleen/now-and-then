@@ -183,10 +183,10 @@ No reverse dependencies in either context. Adapters import from `types/` only �
 
 ## 5. Key Flows
 
-### Frontend Read Flow (e.g. Dashboard loading sites)
+### Frontend Read Flow (e.g. Timeline loading sites)
 
 ```
-DashboardPage renders
+Timeline renders
   → calls useSites() hook
     → useAsyncQuery({ queryFn: getAllSites })
       → active adapter (Mock/Local/Supabase).getAllSites()
