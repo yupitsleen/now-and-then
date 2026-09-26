@@ -6,7 +6,7 @@ import { isDestructionDateFilterActive } from "../types/filters";
  * Hook to calculate derived filter state (active count and flags)
  *
  * Extracts duplicate logic for determining active filters and counts.
- * Used across FilterBar, DataPage, and DesktopLayout to avoid duplication.
+ * Used across FilterBar and Timeline to avoid duplication.
  *
  * @example
  * ```tsx

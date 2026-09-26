@@ -29,8 +29,6 @@ import { BREAKPOINTS, CONTENT_GAP_PX, Z_INDEX } from "../constants/layout";
 import { useActiveFilters } from "../hooks/useActiveFilters";
 import { PalestinianFlagTriangle } from "../components/Decorative";
 
-// Lazy load the map, timeline, and modal components
-// Note: About and Stats are now dedicated pages at /about and /stats for better performance
 const SiteDetailView = lazy(() =>
   import("../components/Map/SiteDetailView").then((m) => ({ default: m.SiteDetailView }))
 );

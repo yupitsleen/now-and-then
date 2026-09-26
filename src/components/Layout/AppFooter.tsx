@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { cn } from "../../styles/theme";
 import { useThemeClasses } from "../../hooks/useThemeClasses";
 import { useTranslation } from "../../contexts/LocaleContext";
@@ -9,11 +8,7 @@ interface AppFooterProps {
 }
 
 /**
- * Application footer with attribution and navigation
- * Green background with Palestinian flag colors
- * Muted in dark mode
- * Stats, About, and Donate now navigate to dedicated pages for better performance
- * Shows dynamic copyright year and last updated date
+ * Application footer with attribution
  */
 export function AppFooter({ isMobile }: AppFooterProps) {
   const t = useThemeClasses();
@@ -51,14 +46,6 @@ export function AppFooter({ isMobile }: AppFooterProps) {
           <div className={cn("container mx-auto px-4")}>
             <p className="text-[10px] text-center font-semibold">
               {translate("footer.title")} •{" "}
-              <Link
-                to="/donate"
-                className="underline hover:text-[#fefefe]/80 transition-colors"
-                aria-label={translate("aria.helpPalestineDonate")}
-              >
-                {translate("footer.donate")}
-              </Link>
-              {" • "}
               <a
                 href="https://github.com/yupitsleen/HeritageTracker"
                 target="_blank"

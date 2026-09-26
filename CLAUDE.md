@@ -10,7 +10,7 @@ Counts (sites, tests, components, lines) are never written in docs — the code 
 
 ---
 
-## Commands
+## Commands in ./HeritageTracker/HeritageTracker folder
 
 ```bash
 npm run dev             # Vite dev server → http://localhost:5173

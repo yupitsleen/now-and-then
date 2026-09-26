@@ -4,14 +4,16 @@
     - CRUD operations (only my account can without an approval feature)
         - But people can have personal sites saved
     - Supabase
-1. month site markers on timeline diff color?
 
 
-1. bottom left (move timeline over for room) under the data scroll, a mini map of the general region, gaza, with a point showing where the site currently selected is. non-satellite version
+
 
 ----------------------------------------------------------------------------------------
 
 DONE
+1. month site markers on timeline diff color?
+
+1. bottom left (move timeline over for room) under the data scroll, a mini map of the general region, gaza, with a point showing where the site currently selected is. non-satellite version
 1. date pickers on maps -- just have calendar symbol and hovering shows the date, clicking opens date picker. its confusing to have the dates there so prominent when the timeline's dates are small
 1. make timeline date more visible. on timeline itself, changes with site change
 1. hovering over the site name in the header says Dashboard which doesnt exist
