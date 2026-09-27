@@ -25,7 +25,7 @@ interface SiteStepperProps {
  * Prev/Next bar for portrait phones — steps the highlighted site through the
  * filtered list. Sits at the seam between the stacked maps and the sites list.
  */
-export function SiteStepper({ sites, highlightedSiteId, onSelect }: SiteStepperProps): JSX.Element {
+export function SiteStepper({ sites, highlightedSiteId, onSelect }: SiteStepperProps) {
   const t = useThemeClasses();
   const translate = useTranslation();
 

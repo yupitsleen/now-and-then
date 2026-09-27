@@ -35,7 +35,7 @@ export function TimelineMobilePortrait({
   onSiteHighlight,
   before,
   after,
-}: TimelineMobilePortraitProps): JSX.Element {
+}: TimelineMobilePortraitProps) {
   const t = useThemeClasses();
   const translate = useTranslation();
 
