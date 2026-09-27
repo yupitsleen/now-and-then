@@ -59,7 +59,7 @@ src/
 │                   #   FilterBar/, SitesTable/, Layout/, Icons/, shared UI)
 ├── pages/          # Timeline.tsx — single-page app, only route is "/"
 ├── hooks/          # useAppState, useFilteredSites, useWaybackReleases,
-│                   #   useSitesQuery, useTimelineData, useDebounce, ...
+│                   #   useSites, useTimelineData, useDebounce, ...
 ├── contexts/       # Animation, Calendar (Gregorian/Islamic), Locale, Theme
 ├── config/         # colorThemes, data.config, wayback, filters, animation
 ├── constants/      # layout (BREAKPOINTS, Z_INDEX), timeline, map, statistics
@@ -75,7 +75,7 @@ server/             # Express backend: controllers/ → services/ → repositori
 
 ### State
 
-Centralized in `useAppState()` (no Redux). `useFilteredSites` for memoized filtering, `useSitesQuery` for React Query caching.
+Centralized in `useAppState()` (no Redux). `useFilteredSites` for memoized filtering, `useSites`/`useAsyncQuery` for data fetching + caching.
 
 ### Backend Modes (env vars only, zero code changes)
 
