@@ -20,13 +20,12 @@ describe("DateLabel", () => {
     expect(onDateChange).toHaveBeenCalledWith("2024-01-15");
   });
 
-  it("hides the date visually and surfaces it via the input's hover title", () => {
+  it("shows the full date as text when editable", () => {
     render(<DateLabel date="2023-10-01" variant="after" onDateChange={vi.fn()} />);
 
     const input = screen.getByTestId("date-label-after");
     expect(input).toHaveAttribute("title", "2023-10-01");
-    // The wrapper doesn't render the date as text — only on hover via the input's title
-    expect(input.parentElement).not.toHaveTextContent("2023-10-01");
+    expect(input.parentElement).toHaveTextContent("2023-10-01");
   });
 
   it("keeps the date input keyboard-accessible (focusable, typeable)", () => {
