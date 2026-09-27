@@ -54,9 +54,9 @@ export function SiteDetailPanel({ site, onViewOnMap }: SiteDetailPanelProps) {
 
         {/* Site Names */}
         <div className="text-center">
-          <h3 className={`text-3xl font-bold ${t.text.heading}`}>{site.name}</h3>
+          <h3 className={`text-2xl sm:text-3xl font-bold ${t.text.heading}`}>{site.name}</h3>
           {site.nameArabic && (
-            <p className={`text-xl mt-2 ${t.text.muted}`}>
+            <p className={`text-lg sm:text-xl mt-2 ${t.text.muted}`}>
               {site.nameArabic}
             </p>
           )}

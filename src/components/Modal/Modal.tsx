@@ -100,7 +100,7 @@ export const Modal = memo(function Modal({ isOpen, onClose, children, title, zIn
         </button>
 
         {/* Modal Body */}
-        <div className="px-6 py-4">{children}</div>
+        <div className="px-4 py-4 sm:px-6">{children}</div>
       </div>
     </div>
   );

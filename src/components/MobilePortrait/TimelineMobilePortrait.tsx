@@ -11,6 +11,7 @@ interface TimelineMobilePortraitProps {
   sites: Site[];
   highlightedSiteId: string | null;
   onSiteHighlight: (siteId: string | null) => void;
+  onSiteClick: (site: Site) => void;
   before: WaybackImagery;
   after: WaybackImagery;
 }
@@ -34,6 +35,7 @@ export function TimelineMobilePortrait({
   sites,
   highlightedSiteId,
   onSiteHighlight,
+  onSiteClick,
   before,
   after,
 }: TimelineMobilePortraitProps) {
@@ -84,6 +86,8 @@ export function TimelineMobilePortrait({
             embedded
             sites={[highlightedSite]}
             onSiteHighlight={onSiteHighlight}
+            onSiteClick={onSiteClick}
+            clickableRow
             highlightedSiteId={highlightedSiteId}
             visibleColumns={["type", "name", "status"]}
             autoScrollHighlighted={false}

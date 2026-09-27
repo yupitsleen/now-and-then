@@ -370,6 +370,7 @@ export function Timeline() {
               sites={filteredSites}
               highlightedSiteId={highlightedSiteId}
               onSiteHighlight={handleSiteHighlight}
+              onSiteClick={setSelectedSite}
               before={{
                 tileUrl: beforeRelease?.tileUrl || "",
                 maxZoom: beforeRelease?.maxZoom || 19,
@@ -383,6 +384,25 @@ export function Timeline() {
             />
           </AnimationProvider>
         )}
+
+        {/* Site Detail Modal */}
+        <Modal
+          isOpen={selectedSite !== null}
+          onClose={() => setSelectedSite(null)}
+          zIndex={Z_INDEX.MODAL}
+        >
+          {selectedSite && (
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center p-8">
+                  <div className={`text-lg ${t.text.muted}`}>Loading site details...</div>
+                </div>
+              }
+            >
+              <SiteDetailPanel site={selectedSite} />
+            </Suspense>
+          )}
+        </Modal>
       </div>
     );
   }
