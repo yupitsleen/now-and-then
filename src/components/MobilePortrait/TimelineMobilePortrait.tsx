@@ -61,27 +61,35 @@ export function TimelineMobilePortrait({
   }, [sites]);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col">
-      {/* Maps fill the first screen minus the stepper bar (~56px) */}
-      <div className="h-[calc(100dvh-56px)] p-2">
-        <ComparisonMapView
-          sites={sites}
-          highlightedSiteId={highlightedSiteId}
-          before={before}
-          after={after}
-          onSiteClick={(site) => onSiteHighlight(site.id)}
-          beforeMapSettings={forcedMapSettings}
-          afterMapSettings={forcedMapSettings}
-          stacked
-        />
-      </div>
+    <div className="flex flex-col">
+      {/* First screen: exactly one (small) viewport tall, so the maps fill the
+          remaining space and the Prev/Next bar is always pinned visible at the
+          bottom — 100svh (toolbar-shown height) guarantees it never drops below
+          the fold on mobile browsers. */}
+      <div className="h-[100svh] flex flex-col">
+        <div className="flex-1 min-h-0 p-2">
+          <ComparisonMapView
+            sites={sites}
+            highlightedSiteId={highlightedSiteId}
+            before={before}
+            after={after}
+            onSiteClick={(site) => onSiteHighlight(site.id)}
+            beforeMapSettings={forcedMapSettings}
+            afterMapSettings={forcedMapSettings}
+            stacked
+          />
+        </div>
 
-      {/* Seam bar: at the screen bottom on load, at the top of the list once scrolled */}
-      <SiteStepper
-        sites={orderedSites}
-        highlightedSiteId={highlightedSiteId}
-        onSelect={onSiteHighlight}
-      />
+        {/* Seam bar: pinned at the bottom of the first screen; scrolls up to sit
+            above the list as the user scrolls down. */}
+        <div className="flex-shrink-0">
+          <SiteStepper
+            sites={orderedSites}
+            highlightedSiteId={highlightedSiteId}
+            onSelect={onSiteHighlight}
+          />
+        </div>
+      </div>
 
       {/* Sites list — same embedded compact table as the desktop sidebar,
           fixed height, scrolls internally. Tapping a row highlights the site
