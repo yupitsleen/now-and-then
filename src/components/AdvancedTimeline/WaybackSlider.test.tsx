@@ -269,9 +269,10 @@ describe("WaybackSlider", () => {
         <WaybackSlider releases={mockReleases} currentIndex={0} onIndexChange={onIndexChange} />
       );
 
-      // One hover group per release, plus the current scrubber's own date bubble
+      // One hover group per release. The scrubber's date bubble is always
+      // visible (not hover-triggered), so it isn't part of this group.
       const hoverGroups = container.querySelectorAll(".group");
-      expect(hoverGroups.length).toBe(mockReleases.length + 1);
+      expect(hoverGroups.length).toBe(mockReleases.length);
     });
   });
 
@@ -389,7 +390,7 @@ describe("WaybackSlider", () => {
         expect(screen.getByTestId("wayback-before-scrubber")).toBeInTheDocument();
       });
 
-      it("gives each scrubber a hover date bubble", () => {
+      it("gives each scrubber an always-visible date bubble", () => {
         renderWithTheme(
           <WaybackSlider
             releases={mockReleases}
@@ -401,7 +402,6 @@ describe("WaybackSlider", () => {
           />
         );
 
-        // CSS-only reveal (group-hover), so assert the bubble exists beside its scrubber
         expect(
           screen.getByTestId("wayback-before-scrubber").parentElement
         ).toHaveTextContent("2014-06-15");
