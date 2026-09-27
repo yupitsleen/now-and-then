@@ -388,16 +388,17 @@ export function WaybackSlider({
           </div>
         </div>
 
-        {/* Year labels - below the track. Colored to match whichever scrubber
-            is nearest and given a solid backing pill (not just colored text),
-            so they stay legible over both light and dark card backgrounds. */}
+        {/* Year labels - below the track. Green up to and including the
+            before scrubber's year, red beyond it, and given a solid backing
+            pill (not just colored text) so they stay legible over both
+            light and dark card backgrounds. */}
         <div className="relative h-5">
           {/* Centered in its year band, which sits inside the track — so no
               edge-overflow special cases for the first and last labels. */}
           {yearMarkers.map(({ year, position }) => {
+            const beforeYear = beforeRelease ? new Date(beforeRelease.releaseDate).getFullYear() : null;
             const color =
-              comparisonMode && beforeRelease &&
-              Math.abs(position - beforePositionPercent) < Math.abs(position - currentPositionPercent)
+              comparisonMode && beforeYear !== null && year <= beforeYear
                 ? COLORS.COMPARE_BEFORE
                 : COLORS.COMPARE_AFTER;
             return (
