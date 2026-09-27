@@ -1,24 +1,28 @@
 import type { Site } from "../../types";
 import { useThemeClasses } from "../../hooks/useThemeClasses";
 import { useTranslation } from "../../contexts/LocaleContext";
+import { COLORS } from "../../config/colorThemes";
 
 /**
- * Target index for a Prev/Next step, or null when the move is not allowed.
+ * Target index for a Prev/Next step, -1 to return to the zoomed-out overview,
+ * or null when the move is not allowed.
  * With nothing selected (current < 0), Next selects the first site and Prev is disabled.
+ * From the first site (current === 0), Prev returns to the overview (-1).
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function stepIndex(current: number, dir: 1 | -1, count: number): number | null {
   if (count <= 0) return null;
   if (current < 0) return dir === 1 ? 0 : null;
   const target = current + dir;
-  if (target < 0 || target >= count) return null;
+  if (target >= count) return null;
+  if (target < 0) return -1;
   return target;
 }
 
 interface SiteStepperProps {
   sites: Site[];
   highlightedSiteId: string | null;
-  onSelect: (siteId: string) => void;
+  onSelect: (siteId: string | null) => void;
 }
 
 /**
@@ -34,22 +38,24 @@ export function SiteStepper({ sites, highlightedSiteId, onSelect }: SiteStepperP
   const next = stepIndex(current, 1, sites.length);
 
   const btn =
-    "flex-1 px-4 py-2 text-sm font-bold rounded disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:outline-none";
+    "flex-1 px-4 py-2 text-sm font-bold rounded text-white disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:outline-none";
 
   return (
     <div className={`flex items-center gap-2 px-3 py-2 ${t.containerBg.semiTransparent}`}>
       <button
         type="button"
-        className={`${btn} ${t.bg.hover} ${t.text.heading}`}
+        className={btn}
+        style={{ backgroundColor: COLORS.FLAG_GREEN }}
         disabled={prev === null}
-        onClick={() => prev !== null && onSelect(sites[prev].id)}
+        onClick={() => prev !== null && onSelect(prev === -1 ? null : sites[prev].id)}
         aria-label={translate("common.previous")}
       >
         ◀ {translate("common.previous")}
       </button>
       <button
         type="button"
-        className={`${btn} ${t.bg.hover} ${t.text.heading}`}
+        className={btn}
+        style={{ backgroundColor: COLORS.FLAG_RED }}
         disabled={next === null}
         onClick={() => next !== null && onSelect(sites[next].id)}
         aria-label={translate("common.next")}

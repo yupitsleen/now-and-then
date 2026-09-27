@@ -1,12 +1,11 @@
 import { useMemo } from "react";
 import type { Site } from "../../types";
 import type { WaybackImagery } from "../../types/waybackTimelineTypes";
-import { useThemeClasses } from "../../hooks/useThemeClasses";
-import { useTranslation } from "../../contexts/LocaleContext";
 import { getEffectiveDestructionDate } from "../../utils/format";
 import { ComparisonMapView } from "../Map/ComparisonMapView";
 import { SitesTable } from "../SitesTable";
 import { SiteStepper } from "./SiteStepper";
+import { AppHeader } from "../Layout/AppHeader";
 
 interface TimelineMobilePortraitProps {
   sites: Site[];
@@ -38,9 +37,6 @@ export function TimelineMobilePortrait({
   before,
   after,
 }: TimelineMobilePortraitProps) {
-  const t = useThemeClasses();
-  const translate = useTranslation();
-
   // Order sites by effective destruction date (ascending) — mirrors the table's
   // default sort: useTableSort compares the getEffectiveDestructionDate strings
   // (ISO dates sort chronologically as text) with nulls last. Matching it here
@@ -60,67 +56,51 @@ export function TimelineMobilePortrait({
     });
   }, [sites]);
 
+  const highlightedSite = sites.find((site) => site.id === highlightedSiteId) ?? null;
+
   return (
-    <div className="flex flex-col">
-      {/* First screen: exactly one (small) viewport tall, so the maps fill the
-          remaining space and the Prev/Next bar is always pinned visible at the
-          bottom — 100svh (toolbar-shown height) guarantees it never drops below
-          the fold on mobile browsers. */}
-      <div className="h-[100svh] flex flex-col">
-        <div className="flex-1 min-h-0 p-2">
-          <ComparisonMapView
-            sites={sites}
-            highlightedSiteId={highlightedSiteId}
-            before={before}
-            after={after}
-            onSiteClick={(site) => onSiteHighlight(site.id)}
-            beforeMapSettings={forcedMapSettings}
-            afterMapSettings={forcedMapSettings}
-            stacked
-          />
-        </div>
-
-        {/* Seam bar: pinned at the bottom of the first screen; scrolls up to sit
-            above the list as the user scrolls down. */}
-        <div className="flex-shrink-0">
-          <SiteStepper
-            sites={orderedSites}
-            highlightedSiteId={highlightedSiteId}
-            onSelect={onSiteHighlight}
-          />
-        </div>
-      </div>
-
-      {/* Sites list — same embedded compact table as the desktop sidebar,
-          fixed height, scrolls internally. Tapping a row highlights the site
-          (repositioning the maps); no detail modal in phase 1. */}
-      <div
-        className={`h-[60vh] overflow-y-auto backdrop-blur-sm rounded ${t.border.primary2} ${t.containerBg.opaque}`}
-      >
-        <SitesTable
-          embedded
-          sites={orderedSites}
-          onSiteClick={(site) => onSiteHighlight(site.id)}
-          onSiteHighlight={onSiteHighlight}
+    // Whole view fits one viewport, no scrolling — 100svh (toolbar-shown height)
+    // guarantees the bottom row never drops below the fold on mobile browsers.
+    <div className="h-[100svh] flex flex-col overflow-hidden">
+      <div className="flex-1 min-h-0 p-2">
+        <ComparisonMapView
+          sites={sites}
           highlightedSiteId={highlightedSiteId}
-          visibleColumns={["type", "name", "status"]}
-          nameClickOnlyWhenHighlighted
-          autoScrollHighlighted={false}
+          before={before}
+          after={after}
+          onSiteClick={(site) => onSiteHighlight(site.id)}
+          beforeMapSettings={forcedMapSettings}
+          afterMapSettings={forcedMapSettings}
+          stacked
         />
       </div>
 
-      {/* Slim footer — same green as AppFooter on larger sizes */}
-      <footer className={`py-2 text-center text-[11px] text-[#fefefe] ${t.flag.greenBg}`}>
-        {translate("footer.title")} ·{" "}
-        <a
-          href="https://github.com/yupitsleen/HeritageTracker"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline hover:text-[#fefefe]/80 transition-colors"
-        >
-          {translate("footer.github")}
-        </a>
-      </footer>
+      {/* Before a site is selected, show the same lockup as the desktop header;
+          once Next has stepped to a site, swap in its single table row (same
+          embedded compact table as the desktop sidebar). */}
+      <div className="flex-shrink-0">
+        {highlightedSite ? (
+          <SitesTable
+            embedded
+            sites={[highlightedSite]}
+            onSiteHighlight={onSiteHighlight}
+            highlightedSiteId={highlightedSiteId}
+            visibleColumns={["type", "name", "status"]}
+            autoScrollHighlighted={false}
+            hideHeader
+          />
+        ) : (
+          <AppHeader centered />
+        )}
+      </div>
+
+      <div className="flex-shrink-0">
+        <SiteStepper
+          sites={orderedSites}
+          highlightedSiteId={highlightedSiteId}
+          onSelect={onSiteHighlight}
+        />
+      </div>
     </div>
   );
 }

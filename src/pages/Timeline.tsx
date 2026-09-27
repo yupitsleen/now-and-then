@@ -318,13 +318,6 @@ export function Timeline() {
     }
   }, [releases, handleSiteHighlight]);
 
-  // Portrait: start on the first site so the stacked maps show real imagery.
-  useEffect(() => {
-    if (isPortraitPhone && !highlightedSiteId && filteredSites.length > 0) {
-      handleSiteHighlight(filteredSites[0].id);
-    }
-  }, [isPortraitPhone, highlightedSiteId, filteredSites, handleSiteHighlight]);
-
   /**
    * Reset wayback sliders to the same positions they load with
    * Green slider (after) goes to last release (most recent)

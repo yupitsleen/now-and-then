@@ -8,8 +8,8 @@ describe("stepIndex", () => {
   it("Prev from nothing selected is disabled", () => {
     expect(stepIndex(-1, -1, 5)).toBeNull();
   });
-  it("clamps at the start", () => {
-    expect(stepIndex(0, -1, 5)).toBeNull();
+  it("Prev from the first site returns to the overview (-1)", () => {
+    expect(stepIndex(0, -1, 5)).toBe(-1);
   });
   it("clamps at the end", () => {
     expect(stepIndex(4, 1, 5)).toBeNull();

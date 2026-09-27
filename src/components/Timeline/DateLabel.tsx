@@ -11,6 +11,8 @@ interface DateLabelProps {
   opacity?: number;
   /** When provided, the label becomes an editable date field (picker + typing) */
   onDateChange?: (date: string) => void;
+  /** Show only the year (e.g. portrait phones, where space is tight) */
+  yearOnly?: boolean;
 }
 
 /**
@@ -32,6 +34,7 @@ export function DateLabel({
   size = "sm",
   opacity = size === "sm" ? 1.0 : 0.7,
   onDateChange,
+  yearOnly = false,
 }: DateLabelProps) {
   const backgroundColor =
     variant === "before"
@@ -93,7 +96,7 @@ export function DateLabel({
       className={boxClasses}
       style={boxStyle}
     >
-      {date}
+      {yearOnly ? date.slice(0, 4) : date}
     </div>
   );
 }

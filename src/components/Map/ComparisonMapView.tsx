@@ -83,6 +83,7 @@ export function ComparisonMapView({
                 variant="before"
                 size="md"
                 onDateChange={stacked ? undefined : onBeforeDateChange}
+                yearOnly={stacked}
               />
             </div>
           )}
@@ -97,6 +98,7 @@ export function ComparisonMapView({
             onZoomToSiteChange={beforeMapSettings?.onZoomToSiteChange}
             mapMarkersOverride={beforeMapSettings?.showMarkers}
             onMapMarkersChange={beforeMapSettings?.onShowMarkersChange}
+            stacked={stacked}
           />
           {beforeControls && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000]">
@@ -118,6 +120,7 @@ export function ComparisonMapView({
                 variant="after"
                 size="md"
                 onDateChange={stacked ? undefined : onAfterDateChange}
+                yearOnly={stacked}
               />
             </div>
           )}
@@ -132,6 +135,7 @@ export function ComparisonMapView({
             onZoomToSiteChange={afterMapSettings?.onZoomToSiteChange}
             mapMarkersOverride={afterMapSettings?.showMarkers}
             onMapMarkersChange={afterMapSettings?.onShowMarkersChange}
+            stacked={stacked}
           />
           {afterControls && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000]">

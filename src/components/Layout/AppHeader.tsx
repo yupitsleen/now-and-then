@@ -12,6 +12,7 @@ import logo from "../../assets/HeritageTrackerLogo.png";
 export function AppHeader({
   leading,
   titleLeft,
+  centered = false,
 }: {
   leading?: ReactNode;
   /**
@@ -19,6 +20,8 @@ export function AppHeader({
    * were open* — it stays there whether the panel is open or railed.
    */
   titleLeft?: number;
+  /** Center the lockup instead of pinning it at `titleLeft` (portrait, no sidebar to align with). */
+  centered?: boolean;
 }) {
   const { isDark } = useTheme();
   const t = useTranslation();
@@ -43,8 +46,10 @@ export function AppHeader({
             never covers the toggle button or eats its clicks. */}
         <button
           onClick={() => navigate("/")}
-          className="absolute inset-y-0 flex items-center gap-3 cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#fefefe]"
-          style={{ left: titleLeft ?? 48 }}
+          className={`absolute inset-y-0 flex items-center gap-3 cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#fefefe] ${
+            centered ? "inset-x-0 justify-center" : ""
+          }`}
+          style={centered ? undefined : { left: titleLeft ?? 48 }}
           aria-label="Go to home page"
         >
           <img src={logo} alt="" className="h-7 w-auto" />
