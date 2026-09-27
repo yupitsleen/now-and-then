@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 /**
  * E2E Tests for Timeline Page
  *
- * Integration checks that the Timeline page renders its Wayback comparison UI and that the
- * Dashboard exposes the timeline event-navigation controls. Detailed scrubber/slider behavior
+ * Integration checks that the Timeline page ('/') renders its Wayback comparison UI and that
+ * the sites table expands with proper focus management. Detailed scrubber/slider behavior
  * is covered by unit tests (WaybackSlider.test.tsx, TimelineScrubber.test.tsx).
  */
 
@@ -13,7 +13,6 @@ test.describe('Timeline Page - Integration', () => {
     test.slow(); // Wayback archive fetch + lazy map chunks are slow under parallel load.
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     // The comparison maps are the default view.
     await expect(page.locator('.leaflet-container').first()).toBeVisible({ timeout: 30000 });
@@ -27,7 +26,6 @@ test.describe('Timeline Page - Integration', () => {
     test.slow();
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     const map = page.locator('.leaflet-container').first();
     await expect(map).toBeVisible({ timeout: 30000 });
@@ -57,17 +55,5 @@ test.describe('Timeline Page - Integration', () => {
     await page.keyboard.press('Escape');
     await zoomIn.focus();
     await expect(zoomIn).toBeFocused();
-  });
-
-  test('dashboard exposes timeline event-navigation controls', async ({ page }) => {
-    await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
-
-    // The scrubber renders as a labelled region containing Previous/Next event buttons.
-    const scrubber = page.getByRole('region', { name: /timeline scrubber/i });
-    await expect(scrubber).toBeVisible({ timeout: 15000 });
-
-    await expect(page.getByRole('button', { name: /previous destruction event/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /next destruction event/i })).toBeVisible();
   });
 });

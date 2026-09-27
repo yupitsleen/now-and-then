@@ -3,67 +3,22 @@ import { test, expect } from '@playwright/test';
 /**
  * E2E Smoke Tests - Basic Functionality
  *
- * Purpose: Quick sanity checks that critical pages load and function
- * Optimized to remove redundant tests and arbitrary waits
+ * Purpose: Quick sanity checks that the single-page app ('/') loads and functions.
+ * The app has one route ('/' → Timeline); /data, /dashboard and /resources/* were
+ * removed in the single-page redesign, so tests that drove those pages are gone.
  */
 
 test.describe('Smoke Tests - Core Pages', () => {
-  test('homepage (Dashboard) loads successfully with map', async ({ page }) => {
+  test('homepage loads successfully with map', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     // Check for key elements
     await expect(page).toHaveTitle(/then & now/i);
 
     // Map should be visible
     const map = page.locator('.leaflet-container').first();
-    await expect(map).toBeVisible({ timeout: 5000 });
-  });
-});
-
-test.describe('Smoke Tests - Navigation', () => {
-  // There is no in-app navigation: the header is a logo and a title, and /data,
-  // /dashboard and /resources/* are retiring. Routes are reached by URL.
-
-  test('browser back button works', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-
-    await page.goto('/data');
-    await page.waitForLoadState('networkidle');
-
-    await page.goBack();
-
-    // toHaveURL retries — under parallel load networkidle can settle before the nav does.
-    await expect(page).not.toHaveURL(/\/data/);
-  });
-});
-
-test.describe('Smoke Tests - Mock Data', () => {
-  test('map shows site markers', async ({ page }) => {
-    // The landing page (/) is the Timeline's comparison satellite view, which hides
-    // site markers by default. The Dashboard is the marker map, so test it here.
-    await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
-
-    // Wait for map to render. The dashboard map chunk (leaflet + map-vendor) is heavy and
-    // lazy-loaded; a cold dev server under parallel load can exceed 15s on first compile.
-    const map = page.locator('.leaflet-container').first();
     await expect(map).toBeVisible({ timeout: 30000 });
-
-    // Look for markers or clusters (flexible: divIcon markers, clusters, canvas, or SVG CircleMarkers)
-    const markers = page.locator('.leaflet-marker-icon, .leaflet-marker-cluster, .marker-cluster, canvas.leaflet-zoom-animated, path.leaflet-interactive').first();
-    await expect(markers).toBeVisible({ timeout: 5000 });
   });
-
-  // FIXME — rebuild as a real journey in the workflow phase (docs/REDESIGN_TEST_PLAN.md →
-  // "Mobile: map marker tap" / site selection). The original test guarded marker existence on
-  // "/" (the Timeline landing view, which hides markers) so it never asserted anything. On the
-  // Dashboard the markers render fine (see "map shows site markers"), but they are SVG
-  // CircleMarkers that a plain Playwright .click() cannot satisfy actionability on — the click
-  // retries until the 60s test timeout. Selecting a site → opening its detail needs a deliberate
-  // approach (force-click / click at marker coordinates), built with the other selection journeys.
-  test.fixme('clicking on map marker shows site details', async () => {});
 });
 
 test.describe('Smoke Tests - Error Handling', () => {
@@ -85,7 +40,6 @@ test.describe('Smoke Tests - Error Handling', () => {
     });
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     // Should have zero critical errors (all errors should be filtered or fixed)
     if (criticalErrors.length > 0) {
@@ -100,7 +54,6 @@ test.describe('Smoke Tests - Performance', () => {
     const startTime = Date.now();
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     const loadTime = Date.now() - startTime;
 
@@ -113,7 +66,6 @@ test.describe('Smoke Tests - Performance', () => {
 test.describe('Smoke Tests - Accessibility', () => {
   test('interactive elements are keyboard accessible', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     // Tab through first few elements
     await page.keyboard.press('Tab');
