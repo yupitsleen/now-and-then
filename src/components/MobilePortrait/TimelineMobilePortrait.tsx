@@ -77,14 +77,14 @@ export function TimelineMobilePortrait({
         />
       </div>
 
-      {/* Slim footer */}
-      <footer className={`py-2 text-center text-[11px] ${t.text.muted}`}>
+      {/* Slim footer — same green as AppFooter on larger sizes */}
+      <footer className={`py-2 text-center text-[11px] text-[#fefefe] ${t.flag.greenBg}`}>
         {translate("footer.title")} ·{" "}
         <a
           href="https://github.com/yupitsleen/HeritageTracker"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline"
+          className="underline hover:text-[#fefefe]/80 transition-colors"
         >
           {translate("footer.github")}
         </a>
