@@ -5,6 +5,7 @@ import {
   formatDateStandard,
   getEffectiveDestructionDate,
   hasUnknownDestructionDate,
+  sortByEffectiveDestructionDate,
 } from "./format";
 
 describe("month-precision date formatting", () => {
@@ -58,6 +59,33 @@ describe("getEffectiveDestructionDate", () => {
       sourceAssessmentDate: "2024-05-27",
     };
     expect(getEffectiveDestructionDate(site)).toBe("2023-12-01");
+  });
+});
+
+describe("sortByEffectiveDestructionDate", () => {
+  it("sorts ascending by effective destruction date", () => {
+    const sites = [
+      { id: "b", dateDestroyed: "2024-01-01" },
+      { id: "a", dateDestroyed: "2023-01-01" },
+    ];
+    expect(sortByEffectiveDestructionDate(sites).map((s) => s.id)).toEqual(["a", "b"]);
+  });
+
+  it("puts sites with no date last", () => {
+    const sites = [
+      { id: "none", dateDestroyed: undefined },
+      { id: "dated", dateDestroyed: "2023-01-01" },
+    ];
+    expect(sortByEffectiveDestructionDate(sites).map((s) => s.id)).toEqual(["dated", "none"]);
+  });
+
+  it("does not mutate the input array", () => {
+    const sites = [
+      { id: "b", dateDestroyed: "2024-01-01" },
+      { id: "a", dateDestroyed: "2023-01-01" },
+    ];
+    sortByEffectiveDestructionDate(sites);
+    expect(sites.map((s) => s.id)).toEqual(["b", "a"]);
   });
 });
 

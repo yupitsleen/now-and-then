@@ -286,6 +286,30 @@ export const getEffectiveDestructionDate = (
 };
 
 /**
+ * Sorts sites by effective destruction date (ascending, nulls last) — mirrors
+ * the sites table's default sort so Prev/Next steppers walk the same order
+ * as the visible rows instead of jumping.
+ */
+export const sortByEffectiveDestructionDate = <
+  T extends Pick<Site, "dateDestroyed" | "sourceAssessmentDate">,
+>(
+  sites: T[]
+): T[] => {
+  return [...sites].sort((a, b) => {
+    const av = getEffectiveDestructionDate(a);
+    const bv = getEffectiveDestructionDate(b);
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    const as = av.toLowerCase();
+    const bs = bv.toLowerCase();
+    if (as < bs) return -1;
+    if (as > bs) return 1;
+    return 0;
+  });
+};
+
+/**
  * Checks if a site has an unknown destruction date.
  * A site has an unknown destruction date if it only has a sourceAssessmentDate
  * but no actual dateDestroyed.
