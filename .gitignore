@@ -34,16 +34,5 @@ nul
 # Test Coverage
 /coverage/
 .claude/
-.playwright-mcp/397.png
-.playwright-mcp/page-2026-09-26T20-03-03-334Z.yml
-.playwright-mcp/page-2026-09-26T20-04-22-442Z.yml
-.playwright-mcp/page-2026-09-26T20-05-08-532Z.yml
-.playwright-mcp/page-2026-09-26T20-06-20-689Z.yml
-.playwright-mcp/page-2026-09-26T20-07-43-528Z.yml
-.playwright-mcp/page-2026-09-26T20-10-18-025Z.yml
-.playwright-mcp/page-2026-09-26T20-11-26-819Z.yml
-.playwright-mcp/page-2026-09-26T20-13-02-537Z.yml
-.playwright-mcp/page-2026-09-26T20-15-24-935Z.yml
-.playwright-mcp/page-2026-09-26T20-15-44-891Z.yml
-.playwright-mcp/page-2026-09-26T20-16-24-638Z.yml
-.playwright-mcp/page-2026-09-26T20-19-56-420Z.yml
+.playwright-mcp/*
+

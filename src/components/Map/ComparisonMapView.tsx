@@ -33,6 +33,8 @@ interface ComparisonMapViewProps {
   /** When provided, the date labels become editable and snap to the nearest release */
   onBeforeDateChange?: (date: string) => void;
   onAfterDateChange?: (date: string) => void;
+  /** Stack the two maps vertically (portrait phones) instead of side-by-side */
+  stacked?: boolean;
 }
 
 /**
@@ -62,14 +64,15 @@ export function ComparisonMapView({
   afterControls,
   onBeforeDateChange,
   onAfterDateChange,
+  stacked = false,
 }: ComparisonMapViewProps) {
   return (
     <div className="relative h-full">
       {/* Side-by-side map layout with gap-2 to match Dashboard */}
-      <div className="flex h-full gap-2">
+      <div className={`flex h-full gap-2 ${stacked ? "flex-col" : "flex-row"}`}>
         {/* Left Map - Earlier imagery (before scrubber) */}
         <div
-          className="w-1/2 h-full border-2 rounded shadow-xl overflow-hidden relative"
+          className={`${stacked ? "w-full h-1/2" : "w-1/2 h-full"} border-2 rounded shadow-xl overflow-hidden relative`}
           style={{ borderColor: COLORS.COMPARE_BEFORE }}
         >
           {/* Date picker button - top right, clear of Leaflet's top-left zoom control */}
@@ -79,7 +82,8 @@ export function ComparisonMapView({
                 date={before.dateLabel}
                 variant="before"
                 size="md"
-                onDateChange={onBeforeDateChange}
+                onDateChange={stacked ? undefined : onBeforeDateChange}
+                yearOnly={stacked}
               />
             </div>
           )}
@@ -94,6 +98,7 @@ export function ComparisonMapView({
             onZoomToSiteChange={beforeMapSettings?.onZoomToSiteChange}
             mapMarkersOverride={beforeMapSettings?.showMarkers}
             onMapMarkersChange={beforeMapSettings?.onShowMarkersChange}
+            stacked={stacked}
           />
           {beforeControls && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000]">
@@ -104,7 +109,7 @@ export function ComparisonMapView({
 
         {/* Right Map - Later imagery (after scrubber) */}
         <div
-          className="w-1/2 h-full border-2 rounded shadow-xl overflow-hidden relative"
+          className={`${stacked ? "w-full h-1/2" : "w-1/2 h-full"} border-2 rounded shadow-xl overflow-hidden relative`}
           style={{ borderColor: COLORS.COMPARE_AFTER }}
         >
           {/* Date picker button - top right, clear of Leaflet's top-left zoom control */}
@@ -114,7 +119,8 @@ export function ComparisonMapView({
                 date={after.dateLabel}
                 variant="after"
                 size="md"
-                onDateChange={onAfterDateChange}
+                onDateChange={stacked ? undefined : onAfterDateChange}
+                yearOnly={stacked}
               />
             </div>
           )}
@@ -129,6 +135,7 @@ export function ComparisonMapView({
             onZoomToSiteChange={afterMapSettings?.onZoomToSiteChange}
             mapMarkersOverride={afterMapSettings?.showMarkers}
             onMapMarkersChange={afterMapSettings?.onShowMarkersChange}
+            stacked={stacked}
           />
           {afterControls && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000]">

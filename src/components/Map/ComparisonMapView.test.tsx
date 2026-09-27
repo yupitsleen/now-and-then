@@ -346,4 +346,48 @@ describe("ComparisonMapView", () => {
       expect(screen.getAllByTestId("map-container")).toHaveLength(2);
     });
   });
+
+  describe("Stacked Layout (Portrait Mode)", () => {
+    it("stacks the two maps vertically when stacked", () => {
+      const { container } = renderWithAnimation(
+        <ComparisonMapView
+          sites={mockSites}
+          highlightedSiteId={null}
+          before={{
+            tileUrl: "https://example.com/before",
+            maxZoom: 19,
+            dateLabel: "2023-10-01",
+          }}
+          after={{
+            tileUrl: "https://example.com/after",
+            maxZoom: 19,
+            dateLabel: "2023-10-01",
+          }}
+          stacked
+        />
+      );
+      expect(container.querySelector(".flex.flex-col")).not.toBeNull();
+      expect(container.querySelector(".flex-row")).toBeNull();
+    });
+
+    it("keeps maps side-by-side by default", () => {
+      const { container } = renderWithAnimation(
+        <ComparisonMapView
+          sites={mockSites}
+          highlightedSiteId={null}
+          before={{
+            tileUrl: "https://example.com/before",
+            maxZoom: 19,
+            dateLabel: "2023-10-01",
+          }}
+          after={{
+            tileUrl: "https://example.com/after",
+            maxZoom: 19,
+            dateLabel: "2023-10-01",
+          }}
+        />
+      );
+      expect(container.querySelector(".flex.flex-col")).toBeNull();
+    });
+  });
 });

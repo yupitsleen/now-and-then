@@ -129,6 +129,19 @@ const MONTH_LANE_H = 11;
 /** Space kept below the axis line for its tick marks and labels (with descenders). */
 const AXIS_LABEL_SPACE = 17;
 
+/** Rough width a "MMM YYYY" label needs before it touches its neighbour. */
+const AXIS_LABEL_PX = 70;
+
+/**
+ * How many axis labels a chart this wide can hold without them colliding —
+ * ~70px each, never fewer than two (one label reads as a broken axis). It's a
+ * hint: d3 snaps it to a nice month cadence (1/2/3/6), so a smaller number just
+ * asks for a coarser one.
+ */
+export function axisTickCount(axisWidth: number): number {
+  return Math.max(2, Math.floor(axisWidth / AXIS_LABEL_PX));
+}
+
 /**
  * Band at the top reserved for the playhead's date pill. The pill is always on —
  * the selected date is the one thing the reader needs at a glance — so it gets
@@ -228,8 +241,12 @@ export class D3TimelineRenderer {
 
     // tickSizeOuter(0): the domain path otherwise ends in a bare downward stub
     // at each end, which reads as the axis breaking off mid-render
+    // Thin the labels to the chart's width so "MMM YYYY" ticks don't collide
+    // when the timeline is narrow — see axisTickCount.
+    const [rangeStart, rangeEnd] = this.timeScale.range();
+
     const xAxis = axisBottom(this.timeScale)
-      .ticks(8)
+      .ticks(axisTickCount(Math.abs(rangeEnd - rangeStart)))
       .tickSizeInner(MONTH_LANE_H + 3)
       .tickSizeOuter(0)
       .tickFormat((d) => {

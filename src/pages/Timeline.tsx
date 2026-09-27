@@ -28,6 +28,8 @@ import { calculateBeforeDate, findClosestReleaseIndex } from "../utils/intervalC
 import { BREAKPOINTS, CONTENT_GAP_PX, Z_INDEX } from "../constants/layout";
 import { useActiveFilters } from "../hooks/useActiveFilters";
 import { PalestinianFlagTriangle } from "../components/Decorative";
+import { useMediaQuery } from "../hooks/useMediaQuery";
+import { TimelineMobilePortrait } from "../components/MobilePortrait/TimelineMobilePortrait";
 
 const SiteDetailView = lazy(() =>
   import("../components/Map/SiteDetailView").then((m) => ({ default: m.SiteDetailView }))
@@ -94,6 +96,13 @@ export function Timeline() {
   // Sync Map toggle - when enabled, clicking timeline dots syncs map to nearest Wayback release
   // Default OFF so the initial Wayback scrubber positions survive the first dot click
   const [syncMapOnDotClick, setSyncMapOnDotClick] = useState(false);
+
+  // Portrait phones get a dedicated map-first layout (see spec 2026-09-27).
+  // Note: portrait does NOT force imagery sync — the maps keep the same default
+  // before/after dates as the other views (baseline vs. latest). Stepping a site
+  // only pans/zooms the maps to it (via the forced zoomToSite in the portrait
+  // layout), it does not re-date the imagery.
+  const isPortraitPhone = useMediaQuery("(orientation: portrait) and (max-width: 767px)");
 
   // Comparison Mode toggle - when enabled, shows two maps side-by-side
   // Default to ON for first-load comparison view
@@ -328,6 +337,56 @@ export function Timeline() {
     window.location.reload();
   }, []);
 
+  const loadingEl = isLoading ? (
+    <div className={`flex-1 flex items-center justify-center rounded ${t.border.primary2} ${t.containerBg.semiTransparent} shadow-xl`}>
+      <div className="text-center">
+        <div className={`text-xl mb-2 ${t.text.heading}`}>Loading Wayback Archive...</div>
+        <div className={`text-sm ${t.text.muted}`}>Fetching historical imagery versions...</div>
+      </div>
+    </div>
+  ) : null;
+
+  const errorEl = error ? (
+    <div className={`flex-1 flex items-center justify-center rounded ${t.border.primary2} ${t.containerBg.semiTransparent} shadow-xl`}>
+      <div className="text-center">
+        <div className="text-xl font-bold mb-2 text-red-600">Error Loading Archive</div>
+        <div className={`text-sm mb-4 ${t.text.muted}`}>{error}</div>
+        <Button onClick={handleRetryClick} variant="primary" size="sm">Retry</Button>
+      </div>
+    </div>
+  ) : null;
+
+  if (isPortraitPhone) {
+    return (
+      <div
+        data-theme={isDark ? "dark" : "light"}
+        className={`min-h-[100dvh] transition-colors duration-200 ${t.layout.appBackground}`}
+      >
+        {loadingEl}
+        {errorEl}
+        {!isLoading && !error && releases.length > 0 && (
+          <AnimationProvider sites={filteredSites}>
+            <TimelineMobilePortrait
+              sites={filteredSites}
+              highlightedSiteId={highlightedSiteId}
+              onSiteHighlight={handleSiteHighlight}
+              before={{
+                tileUrl: beforeRelease?.tileUrl || "",
+                maxZoom: beforeRelease?.maxZoom || 19,
+                dateLabel: beforeRelease?.releaseDate,
+              }}
+              after={{
+                tileUrl: currentRelease?.tileUrl || "",
+                maxZoom: currentRelease?.maxZoom || 19,
+                dateLabel: currentRelease?.releaseDate,
+              }}
+            />
+          </AnimationProvider>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       data-theme={isDark ? "dark" : "light"}
@@ -543,10 +602,12 @@ export function Timeline() {
 
             {/* Bottom row: mini locator map + timeline panels */}
             <div className="flex-shrink-0 flex gap-2 relative z-10" inert={tableExpanded}>
-              {/* Mini overview map — same width as the sidebar */}
+              {/* Mini overview map — same width as the sidebar, and gone with it:
+                  below md the sidebar collapses to the Search+Filters bar
+                  (FilterBar's `hidden md:flex`), so the mini-map hides too. */}
               {!sidebarRailed && (
                 <div
-                  className={`flex-shrink-0 ${t.border.primary2} rounded shadow-xl overflow-hidden`}
+                  className={`hidden md:block flex-shrink-0 ${t.border.primary2} rounded shadow-xl overflow-hidden`}
                   style={{ width: sidebarWidth }}
                 >
                   <Suspense fallback={<SkeletonMap />}>

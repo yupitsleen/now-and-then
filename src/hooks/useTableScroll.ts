@@ -15,18 +15,24 @@ import { useRef, useEffect } from "react";
  *   <tr ref={highlightedSiteId === site.id ? highlightedRowRef : null}>
  * ```
  */
-export function useTableScroll(highlightedSiteId: string | null | undefined) {
+export function useTableScroll(
+  highlightedSiteId: string | null | undefined,
+  enabled: boolean = true
+) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const highlightedRowRef = useRef<HTMLTableRowElement>(null);
 
   useEffect(() => {
+    // Portrait phones opt out: scrollIntoView(block:"center") scrolls the window,
+    // which would yank the view off the maps down to the table on every step.
+    if (!enabled) return;
     if (!highlightedSiteId || !highlightedRowRef.current || !tableContainerRef.current) return;
 
     highlightedRowRef.current.scrollIntoView({
       behavior: "smooth",
       block: "center",
     });
-  }, [highlightedSiteId]);
+  }, [highlightedSiteId, enabled]);
 
   return {
     tableContainerRef,

@@ -39,6 +39,9 @@ interface SiteDetailViewProps {
   mapMarkersOverride?: boolean;
   // Optional callback for map markers change (used in comparison mode for independent control)
   onMapMarkersChange?: (enabled: boolean) => void;
+  // When true (stacked/portrait layout), hides the Leaflet zoom control and the
+  // zoom-to-site/markers settings panel — no room for them on a phone screen.
+  stacked?: boolean;
 }
 
 /**
@@ -61,6 +64,7 @@ export function SiteDetailView({
   onZoomToSiteChange,
   mapMarkersOverride,
   onMapMarkersChange,
+  stacked = false,
 }: SiteDetailViewProps) {
   // Get animation context for timeline sync and zoom toggle
   const { currentTimestamp, syncActive, zoomToSiteEnabled: contextZoomToSite, mapMarkersVisible: contextMapMarkers, setZoomToSiteEnabled: contextSetZoomToSite, setMapMarkersVisible: contextSetMapMarkers } = useAnimation();
@@ -185,7 +189,7 @@ export function SiteDetailView({
         zoom={zoom}
         className="h-full w-full"
         scrollWheelZoom={false}
-        zoomControl={true}
+        zoomControl={!stacked}
         attributionControl={true}
       >
         {/* Custom scroll wheel handler for Ctrl+Scroll zoom */}
@@ -230,7 +234,7 @@ export function SiteDetailView({
       </MapContainer>
 
       {/* Map settings - show on Dashboard (no custom tiles) or when override props provided (comparison/timeline mode) */}
-      {(!customTileUrl || (onZoomToSiteChange !== undefined && onMapMarkersChange !== undefined)) && (
+      {!stacked && (!customTileUrl || (onZoomToSiteChange !== undefined && onMapMarkersChange !== undefined)) && (
         <div className={`absolute bottom-2 left-2 z-[1000] ${t.bg.panel} backdrop-blur-sm border ${t.border.primary} rounded px-2 py-1.5 shadow-md`}>
           <div className="flex flex-col gap-1 text-xs">
             <label className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">

@@ -16,6 +16,8 @@ interface SitesTableProps {
   clickableRow?: boolean; // If true, entire row opens site detail (for Data page)
   nameClickOnlyWhenHighlighted?: boolean; // Timeline: two-step (click row highlights, then name opens detail)
   embedded?: boolean; // Drop the panel chrome (border/background/title) - host provides it
+  autoScrollHighlighted?: boolean; // Scroll highlighted row into view (default true; portrait opts out)
+  hideHeader?: boolean; // Drop the column header row (e.g. portrait's single-row display)
 }
 
 /**
@@ -42,6 +44,8 @@ export function SitesTable({
   clickableRow = false,
   nameClickOnlyWhenHighlighted = false,
   embedded = false,
+  autoScrollHighlighted = true,
+  hideHeader = false,
 }: SitesTableProps) {
   // Route to appropriate variant component
   if (variant === "mobile") {
@@ -63,6 +67,8 @@ export function SitesTable({
       clickableRow={clickableRow}
       nameClickOnlyWhenHighlighted={nameClickOnlyWhenHighlighted}
       embedded={embedded}
+      autoScrollHighlighted={autoScrollHighlighted}
+      hideHeader={hideHeader}
     />
   );
 }

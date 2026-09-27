@@ -31,6 +31,8 @@ interface SitesTableDesktopProps {
   clickableRow?: boolean; // If true, entire row opens site detail (for Data page)
   nameClickOnlyWhenHighlighted?: boolean;
   embedded?: boolean; // Drop the panel chrome (border/background/title) - host provides it
+  autoScrollHighlighted?: boolean; // Scroll the highlighted row into view (default true; portrait opts out)
+  hideHeader?: boolean; // Drop the column header row (e.g. portrait's single-row display)
 }
 
 /**
@@ -64,6 +66,8 @@ export function SitesTableDesktop({
   clickableRow = false,
   nameClickOnlyWhenHighlighted = false,
   embedded = false,
+  autoScrollHighlighted = true,
+  hideHeader = false,
 }: SitesTableDesktopProps) {
   const { isDark } = useTheme();
   const t = useThemeClasses();
@@ -78,7 +82,10 @@ export function SitesTableDesktop({
   const { sortField, sortDirection, handleSort, sortedSites } = useTableSort<Site>(sites, "dateDestroyed", "asc");
 
   // Scroll to highlighted row
-  const { tableContainerRef, highlightedRowRef } = useTableScroll(highlightedSiteId);
+  const { tableContainerRef, highlightedRowRef } = useTableScroll(
+    highlightedSiteId,
+    autoScrollHighlighted
+  );
 
   // Export functionality
   const { selectedExportFormat, setSelectedExportFormat, exportConfigs, handleExport } =
@@ -121,15 +128,17 @@ export function SitesTableDesktop({
       {shouldUseVirtualScroll ? (
         // Virtual scrolling for 100+ sites
         <div>
-          <table className={t.table.base}>
-            <TableHeader
-              visibleColumns={visibleColumnsSet}
-              variant={variant}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              onSort={handleSort}
-            />
-          </table>
+          {!hideHeader && (
+            <table className={t.table.base}>
+              <TableHeader
+                visibleColumns={visibleColumnsSet}
+                variant={variant}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            </table>
+          )}
           <VirtualizedTableBody
             sites={sortedSites}
             onSiteClick={onSiteClick}
@@ -144,13 +153,15 @@ export function SitesTableDesktop({
       ) : (
         // Standard rendering for < 100 sites
         <table className={t.table.base}>
-          <TableHeader
-            visibleColumns={visibleColumnsSet}
-            variant={variant}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            onSort={handleSort}
-          />
+          {!hideHeader && (
+            <TableHeader
+              visibleColumns={visibleColumnsSet}
+              variant={variant}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+          )}
           <tbody>
             {sortedSites.map((site) => (
               <TableRow
