@@ -543,10 +543,12 @@ export function Timeline() {
 
             {/* Bottom row: mini locator map + timeline panels */}
             <div className="flex-shrink-0 flex gap-2 relative z-10" inert={tableExpanded}>
-              {/* Mini overview map — same width as the sidebar */}
+              {/* Mini overview map — same width as the sidebar, and gone with it:
+                  below md the sidebar collapses to the Search+Filters bar
+                  (FilterBar's `hidden md:flex`), so the mini-map hides too. */}
               {!sidebarRailed && (
                 <div
-                  className={`flex-shrink-0 ${t.border.primary2} rounded shadow-xl overflow-hidden`}
+                  className={`hidden md:block flex-shrink-0 ${t.border.primary2} rounded shadow-xl overflow-hidden`}
                   style={{ width: sidebarWidth }}
                 >
                   <Suspense fallback={<SkeletonMap />}>
