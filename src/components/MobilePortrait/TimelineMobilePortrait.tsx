@@ -65,14 +65,16 @@ export function TimelineMobilePortrait({
       {/* Sites list — same embedded compact table as the desktop sidebar,
           fixed height, scrolls internally. Tapping a row highlights the site
           (repositioning the maps); no detail modal in phase 1. */}
-      <div className={`h-[60vh] overflow-y-auto ${t.border.primary2}`}>
+      <div
+        className={`h-[60vh] overflow-y-auto backdrop-blur-sm rounded ${t.border.primary2} ${t.containerBg.opaque}`}
+      >
         <SitesTable
           embedded
           sites={sites}
           onSiteClick={(site) => onSiteHighlight(site.id)}
           onSiteHighlight={onSiteHighlight}
           highlightedSiteId={highlightedSiteId}
-          visibleColumns={["status", "dateDestroyed"]}
+          visibleColumns={["status"]}
           nameClickOnlyWhenHighlighted
         />
       </div>
