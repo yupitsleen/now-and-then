@@ -29,8 +29,6 @@ import { BREAKPOINTS, CONTENT_GAP_PX, Z_INDEX } from "../constants/layout";
 import { useActiveFilters } from "../hooks/useActiveFilters";
 import { PalestinianFlagTriangle } from "../components/Decorative";
 
-// Lazy load the map, timeline, and modal components
-// Note: About and Stats are now dedicated pages at /about and /stats for better performance
 const SiteDetailView = lazy(() =>
   import("../components/Map/SiteDetailView").then((m) => ({ default: m.SiteDetailView }))
 );
@@ -584,9 +582,9 @@ export function Timeline() {
                     aria-selected={timelineTab === tab}
                     aria-controls={`timeline-panel-${tab}`}
                     onClick={() => setTimelineTab(tab)}
-                    className={`px-1.5 py-0.5 text-[11px] font-bold rounded border-b-2 transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none ${
+                    className={`px-1.5 py-0.5 text-[11px] font-bold rounded border-b-2 transition-colors focus:ring-2 focus:ring-brand focus:outline-none ${
                       timelineTab === tab
-                        ? `border-[#009639] ${t.text.heading}`
+                        ? `border-brand ${t.text.heading}`
                         : `border-transparent ${t.text.muted} ${t.bg.hover}`
                     }`}
                   >

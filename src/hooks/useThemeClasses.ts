@@ -87,11 +87,11 @@ export function useThemeClasses() {
      */
     flag: {
       /** Background colors for Palestinian flag red */
-      redBg: isDark ? "bg-[#8b2a30]" : "bg-[#ed3039]",
+      redBg: isDark ? "bg-[#8b2a30]" : "bg-flag-red",
       /** Background colors for Palestinian flag green */
-      greenBg: isDark ? "bg-[#2d5a38]" : "bg-[#009639]",
+      greenBg: isDark ? "bg-[#2d5a38]" : "bg-brand",
       /** Hover state for green buttons */
-      greenHover: isDark ? "hover:bg-[#244a2e]" : "hover:bg-[#007b2f]",
+      greenHover: isDark ? "hover:bg-[#244a2e]" : "hover:bg-brand-hover",
     },
 
     /**
@@ -103,7 +103,7 @@ export function useThemeClasses() {
         ? "bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
         : `bg-white border-[${COLORS.BORDER_BLACK}] text-gray-900 placeholder:text-gray-400`,
       /** Focus state */
-      focus: `focus:outline-none focus:ring-2 focus:ring-[${COLORS.FLAG_GREEN}] focus:border-transparent`,
+      focus: `focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent`,
       /** Number input width */
       number: "w-20",
     },
@@ -149,7 +149,7 @@ export function useThemeClasses() {
       /** Modal heading */
       modalHeading: isDark ? "text-gray-100" : "text-black",
       /** Skip to content link focus state */
-      skipLink: "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[10002] focus:bg-[#009639] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg",
+      skipLink: "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[10002] focus:bg-brand focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg",
     },
 
     /**
@@ -157,19 +157,15 @@ export function useThemeClasses() {
      */
     timeline: {
       /** Timeline container - Ultra compact */
-      container: isDark
-        ? "backdrop-blur-sm border border-white rounded px-2 pt-1.5 pb-1 shadow-lg transition-colors duration-200 bg-[#000000]/95"
-        : "backdrop-blur-sm border border-black rounded px-2 pt-1.5 pb-1 shadow-lg transition-colors duration-200 bg-white/95",
+      container: `backdrop-blur-sm border ${isDark ? "border-white" : "border-black"} rounded px-2 pt-1.5 pb-1 shadow-lg transition-colors duration-200 ${isDark ? "bg-[#000000]/95" : "bg-white/95"}`,
       /** Current date display */
-      currentDate: isDark ? "text-xs font-semibold text-center flex-1 text-[#fefefe]" : "text-xs font-semibold text-center flex-1",
+      currentDate: `text-xs font-semibold text-center flex-1${isDark ? " text-[#fefefe]" : ""}`,
       /** Clear date filter button (visible state) */
-      clearFilterVisible: isDark
-        ? "flex items-center gap-1.5 px-2 py-1 rounded shadow-md hover:shadow-lg transition-all duration-200 text-[10px] font-semibold active:scale-95 border border-white"
-        : "flex items-center gap-1.5 px-2 py-1 rounded shadow-md hover:shadow-lg transition-all duration-200 text-[10px] font-semibold active:scale-95 border border-black",
+      clearFilterVisible: `flex items-center gap-1.5 px-2 py-1 rounded shadow-md hover:shadow-lg transition-all duration-200 text-[10px] font-semibold active:scale-95 border ${isDark ? "border-white" : "border-black"}`,
       /** Clear date filter button (invisible/disabled state) */
       clearFilterInvisible: "invisible",
       /** Speed control select */
-      speedSelect: "px-2 py-1 border rounded text-xs focus:ring-2 focus:ring-[#009639] focus:border-[#009639]",
+      speedSelect: "px-2 py-1 border rounded text-xs focus:ring-2 focus:ring-brand focus:border-brand",
       /** Keyboard hint kbd element */
       kbdKey: "px-0.5 py-0 border rounded text-[10px]",
     },
@@ -239,9 +235,9 @@ export function useThemeClasses() {
      */
     stats: {
       /** Red accent for destruction statistics (dark mode only) */
-      destructionNumber: isDark ? `text-[${COLORS.FLAG_RED}]` : "text-black",
+      destructionNumber: isDark ? `text-flag-red` : "text-black",
       /** Green accent for heritage statistics (dark mode only) */
-      heritageNumber: isDark ? `text-[${COLORS.FLAG_GREEN}]` : "text-black",
+      heritageNumber: isDark ? `text-brand` : "text-black",
       /** Orange accent for cultural institution statistics (dark mode only) */
       culturalNumber: isDark ? "text-orange-600" : "text-black",
       /** Red background gradient for critical sections */

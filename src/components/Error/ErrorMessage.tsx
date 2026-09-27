@@ -86,7 +86,7 @@ export function ErrorMessage({
             className="
               w-full
               px-4 py-2
-              bg-[#009639]
+              bg-brand
               hover:bg-[#007A2E]
               text-white
               font-medium
@@ -94,7 +94,7 @@ export function ErrorMessage({
               transition-colors
               focus:outline-none
               focus:ring-2
-              focus:ring-[#009639]
+              focus:ring-brand
               focus:ring-offset-2
             "
             type="button"

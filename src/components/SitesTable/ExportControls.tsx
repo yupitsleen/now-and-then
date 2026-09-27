@@ -28,7 +28,7 @@ export function ExportControls({
       <select
         value={selectedFormat}
         onChange={(e) => onFormatChange(e.target.value as ExportFormatId)}
-        className={`px-2 py-1 text-[10px] rounded border ${t.border.default} ${t.bg.primary} ${t.text.body} focus:outline-none focus:ring-1 focus:ring-[#009639] transition-colors duration-200`}
+        className={`px-2 py-1 text-[10px] rounded border ${t.border.default} ${t.bg.primary} ${t.text.body} focus:outline-none focus:ring-1 focus:ring-brand transition-colors duration-200`}
         title={translate("table.selectExportFormat")}
         aria-label={translate("table.selectExportFormat")}
       >

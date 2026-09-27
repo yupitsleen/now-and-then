@@ -11,11 +11,10 @@ export async function waitForPageReady(page: Page, options?: {
 }) {
   const { waitForMap = false, waitForTimeline = false, timeout = 10000 } = options || {};
 
-  // Wait for network to be idle
-  await page.waitForLoadState('networkidle');
-
-  // Additional wait for React to fully hydrate (especially for lazy-loaded components)
-  await page.waitForTimeout(1000);
+  // page.goto already waits for the 'load' event. We deliberately avoid
+  // 'networkidle' (the Leaflet/OSM map streams tiles, so the network never
+  // idles promptly) and blind timeouts — Playwright locators auto-wait, and
+  // the element waits below cover the lazy-loaded components.
 
   // Wait for specific elements based on page type
   if (waitForMap) {

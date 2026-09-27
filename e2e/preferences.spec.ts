@@ -13,7 +13,6 @@ import { test, expect } from "@playwright/test";
 /** Opens the Advanced Settings block that holds the theme and language controls. */
 async function openAdvancedSettings(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.waitForLoadState("networkidle");
   // The sidebar may load railed or open; either way, end up open before reaching the tabs.
   const show = page.getByRole("button", { name: /show filters/i });
   if (await show.isVisible()) await show.click();

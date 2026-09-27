@@ -29,7 +29,7 @@ export function TextArea({
   const sizeClasses = size === "small" ? "px-2 py-2 text-sm" : "px-4 py-2";
 
   const textareaClasses = cn(
-    "w-full rounded-md focus:ring-2 focus:ring-[#009639] focus:border-[#009639] resize-y",
+    "w-full rounded-md focus:ring-2 focus:ring-brand focus:border-brand resize-y",
     t.border.primary,
     t.input.base,
     sizeClasses,

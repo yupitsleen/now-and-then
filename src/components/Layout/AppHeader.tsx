@@ -59,9 +59,9 @@ export function AppHeader({
             </span>
             <span className="h-4 w-px bg-[#fefefe]/25" aria-hidden="true" />
             <span className="text-[15px] font-medium tracking-wide">
-              <span className="text-[#009639]">{then.trim()}</span>
+              <span className="text-brand">{then.trim()}</span>
               <span className="text-[#fefefe]/60"> &amp; </span>
-              <span className="text-[#ed3039]">{now?.trim()}</span>
+              <span className="text-flag-red">{now?.trim()}</span>
             </span>
           </h1>
         </button>

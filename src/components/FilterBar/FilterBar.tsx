@@ -374,7 +374,7 @@ export const FilterBar = memo(function FilterBar({
         <button
           type="button"
           onClick={handleClearSearch}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none rounded"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:ring-2 focus:ring-brand focus:outline-none rounded"
           aria-label={translate("filters.clearSearch")}
           title={TOOLTIPS.FILTERS.CLEAR_SEARCH}
         >
@@ -390,7 +390,7 @@ export const FilterBar = memo(function FilterBar({
         type="checkbox"
         checked={filters.showUnknownDates}
         onChange={handleToggleUnknownDates}
-        className="w-5 h-5 rounded border-gray-300 text-[#009639] focus:ring-[#009639] cursor-pointer"
+        className="w-5 h-5 rounded border-gray-300 text-brand focus:ring-brand cursor-pointer"
       />
       <span className={cn("text-sm", t.text.body)}>
         {translate("timeline.showUnknownDates")}
@@ -404,7 +404,7 @@ export const FilterBar = memo(function FilterBar({
       onClick={handleOpenMobileFilters}
       className={cn(
         "md:hidden flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md border",
-        "transition-all duration-200 focus:ring-2 focus:ring-[#009639] focus:outline-none",
+        "transition-all duration-200 focus:ring-2 focus:ring-brand focus:outline-none",
         t.bg.primary,
         t.border.subtle,
         t.bg.hover,
@@ -449,7 +449,7 @@ export const FilterBar = memo(function FilterBar({
             <button
               type="button"
               onClick={handleCloseMobileFilters}
-              className={cn("p-1 rounded-md transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none", t.bg.hover)}
+              className={cn("p-1 rounded-md transition-colors focus:ring-2 focus:ring-brand focus:outline-none", t.bg.hover)}
               aria-label={translate("filters.closeFilters")}
             >
               <CloseIcon className="w-6 h-6" aria-hidden="true" />
@@ -513,7 +513,7 @@ export const FilterBar = memo(function FilterBar({
       type="button"
       onClick={onVariantToggle}
       className={cn(
-        "p-1.5 rounded-md transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none",
+        "p-1.5 rounded-md transition-colors focus:ring-2 focus:ring-brand focus:outline-none",
         t.bg.hover,
         t.text.body
       )}
@@ -530,6 +530,101 @@ export const FilterBar = memo(function FilterBar({
       </svg>
     </button>
   ) : null;
+
+  // Sidebar tab panels — extracted from the sidebar return for legibility; same
+  // markup and conditionals as before, just named.
+
+  // Sites table fills the panel and scrolls internally.
+  const sitesTabPanel = (
+    <div className="flex-1 min-h-0 px-1.5 pb-1.5 relative" {...tabPanelProps}>
+      {onSitesExpandToggle && (
+        <button
+          type="button"
+          onClick={onSitesExpandToggle}
+          className="absolute top-0.5 right-1.5 z-20 p-1 rounded bg-inherit text-brand hover:text-brand-hover transition-colors focus:ring-2 focus:ring-brand focus:outline-none"
+          aria-label={translate("table.expandTable")}
+          title={translate("table.expandTable")}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+        </button>
+      )}
+      {sitesTab}
+    </div>
+  );
+
+  // Filters tab: result count + Clear All, search, facet accordion, show-unknown-dates.
+  const filtersTabPanel = (
+    <>
+      {/* Result count — prominent (not the 10px of the bar) — + Clear All */}
+      {showActions && (
+        <div className="flex items-center justify-between gap-2">
+          <span className={cn("text-sm font-semibold", t.text.body)}>
+            {translate("filters.showingCount", { filtered: filteredSites, total: totalSites })}
+          </span>
+          {hasActiveFilters && onClearAll && (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={onClearAll}
+              className="whitespace-nowrap"
+              title={TOOLTIPS.FILTERS.CLEAR_ALL}
+            >
+              {translate("filters.clearAll")}
+            </Button>
+          )}
+        </div>
+      )}
+
+      {searchBox}
+
+      {/* Facets — collapsible accordion groups, open by default.
+          ponytail: native <details>, so open/close needs no state and is
+          keyboard-accessible for free. Open state is not persisted — add
+          localStorage only if users ask for it to survive reloads. */}
+      {filterSections.map((filterSection) => (
+        <details key={filterSection.key} open className="group">
+          <summary
+            className={cn(
+              "flex items-center gap-2 mb-2 cursor-pointer list-none rounded focus:ring-2 focus:ring-brand focus:outline-none",
+              "[&::-webkit-details-marker]:hidden"
+            )}
+          >
+            <svg
+              className={cn(
+                "w-3.5 h-3.5 flex-shrink-0 transition-transform group-open:rotate-90",
+                localeConfig.direction === "rtl" && "-scale-x-100",
+                t.text.body
+              )}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+            </svg>
+            <h3 className={cn("text-sm font-semibold", t.text.heading)}>
+              {filterSection.heading}
+            </h3>
+            {filterSection.count > 0 &&
+              (filterSection.isRange ? (
+                <span
+                  className="w-2 h-2 rounded-full bg-brand"
+                  role="img"
+                  aria-label={translate("filters.filterActive")}
+                />
+              ) : (
+                <CountBadge count={filterSection.count} variant="primary" />
+              ))}
+          </summary>
+          {filterSection.content}
+        </details>
+      ))}
+
+      <div>{showUnknownDatesCheckbox}</div>
+    </>
+  );
 
   // Sidebar: persistent vertical facet panel on desktop; mobile keeps the drawer.
   // Each facet is a self-contained <section> so a collapse header can be added later.
@@ -568,9 +663,9 @@ export const FilterBar = memo(function FilterBar({
                       onClick={() => setSidebarTab(tab)}
                       title={translate(`filters.${tab}`)}
                       className={cn(
-                        "px-2 py-1 rounded-t border-b-2 transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none",
+                        "px-2 py-1 rounded-t border-b-2 transition-colors focus:ring-2 focus:ring-brand focus:outline-none",
                         activeTab === tab
-                          ? cn("border-[#009639]", t.text.heading)
+                          ? cn("border-brand", t.text.heading)
                           : cn("border-transparent", t.text.muted, t.bg.hover)
                       )}
                     >
@@ -595,7 +690,7 @@ export const FilterBar = memo(function FilterBar({
                     type="button"
                     onClick={() => onSidebarCollapsedChange(true)}
                     className={cn(
-                      "p-1 rounded-md transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none",
+                      "p-1 rounded-md transition-colors focus:ring-2 focus:ring-brand focus:outline-none",
                       t.bg.hover,
                       t.text.body
                     )}
@@ -611,23 +706,7 @@ export const FilterBar = memo(function FilterBar({
             </div>
 
             {activeTab === "sites" ? (
-              /* Sites table fills the panel and scrolls internally. */
-              <div className="flex-1 min-h-0 px-1.5 pb-1.5 relative" {...tabPanelProps}>
-                {onSitesExpandToggle && (
-                  <button
-                    type="button"
-                    onClick={onSitesExpandToggle}
-                    className="absolute top-0.5 right-1.5 z-20 p-1 rounded bg-inherit text-[#009639] hover:text-[#007b2f] transition-colors focus:ring-2 focus:ring-[#009639] focus:outline-none"
-                    aria-label={translate("table.expandTable")}
-                    title={translate("table.expandTable")}
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                    </svg>
-                  </button>
-                )}
-                {sitesTab}
-              </div>
+              sitesTabPanel
             ) : (
               /* dir="rtl" on the scroll container puts the scrollbar on the left; the
                  inner wrapper restores the locale's reading direction for the content. */
@@ -641,76 +720,7 @@ export const FilterBar = memo(function FilterBar({
                   className="flex flex-col gap-3 p-3 pt-1"
                   {...tabPanelProps}
                 >
-                  {activeTab === "settings" ? settings : (
-              <>
-            {/* Result count — prominent (not the 10px of the bar) — + Clear All */}
-            {showActions && (
-              <div className="flex items-center justify-between gap-2">
-                <span className={cn("text-sm font-semibold", t.text.body)}>
-                  {translate("filters.showingCount", { filtered: filteredSites, total: totalSites })}
-                </span>
-                {hasActiveFilters && onClearAll && (
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={onClearAll}
-                    className="whitespace-nowrap"
-                    title={TOOLTIPS.FILTERS.CLEAR_ALL}
-                  >
-                    {translate("filters.clearAll")}
-                  </Button>
-                )}
-              </div>
-            )}
-
-            {searchBox}
-
-            {/* Facets — collapsible accordion groups, open by default.
-                ponytail: native <details>, so open/close needs no state and is
-                keyboard-accessible for free. Open state is not persisted — add
-                localStorage only if users ask for it to survive reloads. */}
-            {filterSections.map((filterSection) => (
-              <details key={filterSection.key} open className="group">
-                <summary
-                  className={cn(
-                    "flex items-center gap-2 mb-2 cursor-pointer list-none rounded focus:ring-2 focus:ring-[#009639] focus:outline-none",
-                    "[&::-webkit-details-marker]:hidden"
-                  )}
-                >
-                  <svg
-                    className={cn(
-                      "w-3.5 h-3.5 flex-shrink-0 transition-transform group-open:rotate-90",
-                      localeConfig.direction === "rtl" && "-scale-x-100",
-                      t.text.body
-                    )}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
-                  </svg>
-                  <h3 className={cn("text-sm font-semibold", t.text.heading)}>
-                    {filterSection.heading}
-                  </h3>
-                  {filterSection.count > 0 &&
-                    (filterSection.isRange ? (
-                      <span
-                        className="w-2 h-2 rounded-full bg-[#009639]"
-                        role="img"
-                        aria-label={translate("filters.filterActive")}
-                      />
-                    ) : (
-                      <CountBadge count={filterSection.count} variant="primary" />
-                    ))}
-                </summary>
-                {filterSection.content}
-              </details>
-            ))}
-
-            <div>{showUnknownDatesCheckbox}</div>
-              </>
-                  )}
+                  {activeTab === "settings" ? settings : filtersTabPanel}
                 </div>
               </div>
             )}
@@ -718,8 +728,8 @@ export const FilterBar = memo(function FilterBar({
             {resize && (
               <div
                 className={cn(
-                  "absolute top-0 right-0 w-2 h-full cursor-col-resize z-20 hover:bg-[#ed3039] hover:bg-opacity-30 transition-colors",
-                  resize.isResizing && "bg-[#ed3039] bg-opacity-50"
+                  "absolute top-0 right-0 w-2 h-full cursor-col-resize z-20 hover:bg-flag-red hover:bg-opacity-30 transition-colors",
+                  resize.isResizing && "bg-flag-red bg-opacity-50"
                 )}
                 onMouseDown={resize.onResizeStart}
                 title={translate("aria.dragToResizeTable")}
@@ -781,9 +791,9 @@ export const FilterBar = memo(function FilterBar({
             onClick={handleToggleUnknownDates}
             className={cn(
               "hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md border",
-              "transition-all duration-200 focus:ring-2 focus:ring-[#009639] focus:outline-none",
+              "transition-all duration-200 focus:ring-2 focus:ring-brand focus:outline-none",
               filters.showUnknownDates
-                ? "bg-[#009639] text-white border-[#009639]"
+                ? "bg-brand text-white border-brand"
                 : cn(t.bg.primary, t.border.subtle, t.bg.hover, t.text.body)
             )}
             aria-label={translate("timeline.showUnknownDates")}

@@ -56,8 +56,8 @@ export function TableRow({
       className={`transition-colors duration-150 border-b ${t.border.default} ${
         isHighlighted
           ? isDark
-            ? "bg-green-900/40 ring-2 ring-[#009639] ring-inset"
-            : "bg-green-50/60 ring-2 ring-[#009639] ring-inset"
+            ? "bg-green-900/40 ring-2 ring-brand ring-inset"
+            : "bg-green-50/60 ring-2 ring-brand ring-inset"
           : `${t.bg.primary}/50 ${t.bg.hover}`
       } ${clickableRow ? "cursor-pointer" : ""}`}
       onClick={() => {
@@ -101,7 +101,7 @@ export function TableRow({
               className="text-left w-full hover:underline"
             >
               <div
-                className={`font-semibold ${COMPACT_TABLE.text} text-[#009639] hover:text-[#007b2f]`}
+                className={`font-semibold ${COMPACT_TABLE.text} text-brand hover:text-brand-hover`}
                 dir={primaryDir}
               >
                 {primary}

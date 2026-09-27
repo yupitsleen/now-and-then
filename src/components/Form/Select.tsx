@@ -16,7 +16,7 @@ export function Select({ size = "default", className, children, ...props }: Sele
   const sizeClasses = size === "small" ? "px-2 py-2 text-sm" : "px-4 py-2";
 
   const baseClasses = cn(
-    "w-full rounded-md focus:ring-2 focus:ring-[#009639] focus:border-[#009639]",
+    "w-full rounded-md focus:ring-2 focus:ring-brand focus:border-brand",
     t.border.primary,
     t.input.base,
     sizeClasses,

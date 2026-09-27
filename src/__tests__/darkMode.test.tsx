@@ -7,8 +7,6 @@ import { CalendarProvider } from "../contexts/CalendarContext";
 import { AnimationProvider } from "../contexts/AnimationContext";
 import { mockSites } from "../data/mockSites";
 
-import { About } from "../components/About/About";
-import { DonateModal } from "../components/Donate/DonateModal";
 import { SiteDetailPanel } from "../components/SiteDetail/SiteDetailPanel";
 import { FilterBar } from "../components/FilterBar/FilterBar";
 import { SitesTable } from "../components/SitesTable";
@@ -30,8 +28,6 @@ const emptyFilters = {
 };
 
 const components: Array<[string, () => React.ReactElement]> = [
-  ["About", () => <About />],
-  ["DonateModal", () => <DonateModal />],
   ["SiteDetailPanel", () => <SiteDetailPanel site={mockSites[0]} />],
   ["FilterBar", () => <FilterBar filters={emptyFilters} onFilterChange={noop} />],
   [

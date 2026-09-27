@@ -43,12 +43,12 @@ export function FilterButton({ label, count, children, icon, panelWidth = "w-64"
           <PopoverButton
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md border",
-              "transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#009639]",
+              "transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand",
               t.bg.primary,
               t.border.subtle,
               t.bg.hover,
               t.text.body,
-              open && "ring-2 ring-[#009639] border-[#009639]"
+              open && "ring-2 ring-brand border-brand"
             )}
             title={tooltip}
           >

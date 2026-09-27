@@ -61,10 +61,11 @@ test.describe("Filter workflows", () => {
   });
 
   // Regression: /data used to run its own inline filter that only understood
-  // type/status/search, so date and year filters silently did nothing there.
-  test("the data page filters by year built, not just type/status/search", async ({ page }) => {
-    await page.goto("/data");
-    const sidebar = await openSidebar(page);
+  // type/status/search, so date and year filters silently did nothing. The
+  // single-page sidebar is the one filter now, so it must honor year/date too.
+  test("filters by year built, not just type/status/search", async ({ page }) => {
+    await page.goto("/");
+    const sidebar = await openFiltersTab(page);
 
     const count = sidebar.getByText(/showing \d+ of \d+ sites/i);
     await expect(count).toBeVisible({ timeout: 30000 });
@@ -77,9 +78,9 @@ test.describe("Filter workflows", () => {
 
   // Same regression class as the year filter above: destruction dates were the
   // other range the old inline /data filter ignored.
-  test("the data page filters by destruction date range", async ({ page }) => {
-    await page.goto("/data");
-    const sidebar = await openSidebar(page);
+  test("filters by destruction date range", async ({ page }) => {
+    await page.goto("/");
+    const sidebar = await openFiltersTab(page);
 
     const count = sidebar.getByText(/showing \d+ of \d+ sites/i);
     await expect(count).toBeVisible({ timeout: 30000 });
@@ -92,8 +93,8 @@ test.describe("Filter workflows", () => {
   });
 
   test("Clear All restores the unfiltered result set", async ({ page }) => {
-    await page.goto("/data");
-    const sidebar = await openSidebar(page);
+    await page.goto("/");
+    const sidebar = await openFiltersTab(page);
 
     const count = sidebar.getByText(/showing \d+ of \d+ sites/i);
     await expect(count).toBeVisible({ timeout: 30000 });
@@ -107,8 +108,8 @@ test.describe("Filter workflows", () => {
   });
 
   test("Clear All empties the year inputs, not just the filter behind them", async ({ page }) => {
-    await page.goto("/data");
-    const sidebar = await openSidebar(page);
+    await page.goto("/");
+    const sidebar = await openFiltersTab(page);
 
     const fromYear = sidebar.getByPlaceholder("From year");
     await expect(fromYear).toBeVisible({ timeout: 30000 });
@@ -121,19 +122,5 @@ test.describe("Filter workflows", () => {
 
     // A stale 1500 next to an inactive filter is the bug; the prefill is the reset.
     await expect(fromYear).toHaveValue(prefill);
-  });
-
-  test("the Dashboard remembers the sidebar filter layout across a reload", async ({ page }) => {
-    await page.goto("/dashboard");
-    const sidebar = page.getByRole("complementary", { name: /filters/i });
-
-    // Default is the top bar; switching is a remembered per-user preference.
-    await expect(sidebar).toHaveCount(0);
-    await page.getByRole("button", { name: /switch to sidebar/i }).click();
-    await expect(sidebar).toBeVisible();
-
-    await page.reload();
-
-    await expect(sidebar).toBeVisible({ timeout: 30000 });
   });
 });

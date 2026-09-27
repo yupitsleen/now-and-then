@@ -22,7 +22,7 @@ export function FilterTag({ label, onRemove, ariaLabel }: FilterTagProps) {
       <button
         type="button"
         onClick={onRemove}
-        className="ml-0.5 text-gray-200 hover:text-[#ed3039] transition-colors text-sm font-bold leading-none focus:ring-2 focus:ring-[#ed3039] focus:outline-none rounded"
+        className="ml-0.5 text-gray-200 hover:text-flag-red transition-colors text-sm font-bold leading-none focus:ring-2 focus:ring-flag-red focus:outline-none rounded"
         aria-label={ariaLabel}
         title={TOOLTIPS.FILTERS.REMOVE_PILL}
       >

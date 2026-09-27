@@ -71,7 +71,7 @@ export function SitePopup({ site, onViewMore }: SitePopupProps) {
       <div className={`flex ${isRTL ? "justify-start" : "justify-end"}`}>
         <button
           onClick={onViewMore}
-          className={`px-2 py-1 text-[10px] font-semibold rounded transition-all duration-200 active:scale-95 text-[#009639] hover:text-white bg-transparent ${t.flag.greenHover} border border-[#009639]`}
+          className={`px-2 py-1 text-[10px] font-semibold rounded transition-all duration-200 active:scale-95 text-brand hover:text-white bg-transparent ${t.flag.greenHover} border border-brand`}
         >
           {isRTL ? `← ${translate("siteDetail.seeMore")}` : `${translate("siteDetail.seeMore")} →`}
         </button>

@@ -47,14 +47,4 @@ test.describe("visual capture", () => {
       }
     }
   });
-
-  test("other pages", async ({ page }) => {
-    await page.goto("/data");
-    await page.waitForTimeout(2500);
-    await page.screenshot(shot("05-data"));
-
-    await page.goto("/dashboard");
-    await page.waitForTimeout(2500);
-    await page.screenshot(shot("06-dashboard"));
-  });
 });

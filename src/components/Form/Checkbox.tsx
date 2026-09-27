@@ -28,7 +28,7 @@ export function Checkbox({
   const sizeClasses = size === "small" ? "h-3.5 w-3.5" : "h-4 w-4";
 
   const checkboxClasses = cn(
-    "rounded border-2 text-[#009639] focus:ring-2 focus:ring-[#009639] focus:ring-offset-2",
+    "rounded border-2 text-brand focus:ring-2 focus:ring-brand focus:ring-offset-2",
     t.border.primary,
     t.input.base,
     sizeClasses,

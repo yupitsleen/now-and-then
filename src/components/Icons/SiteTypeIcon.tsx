@@ -62,7 +62,7 @@ export function SiteTypeIcon({
     if (IconComponent) {
       return (
         <IconComponent
-          className={`${className} !text-[#ed3039]`}
+          className={`${className} !text-flag-red`}
           aria-label={typeConfig.label}
           role="img"
         />

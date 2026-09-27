@@ -18,5 +18,5 @@ export function SortIcon({ field, currentField, direction }: SortIconProps) {
     return <span className={`ml-1 ${t.icon.default}`}>↕</span>;
   }
 
-  return <span className="text-[#009639] ml-1">{direction === "asc" ? "↑" : "↓"}</span>;
+  return <span className="text-brand ml-1">{direction === "asc" ? "↑" : "↓"}</span>;
 }

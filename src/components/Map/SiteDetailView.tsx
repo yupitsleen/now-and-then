@@ -150,7 +150,7 @@ export function SiteDetailView({
     return L.divIcon({
       className: MARKER_CLASSNAMES.CUSTOM_ICON,
       html: `
-        <div class="w-5 h-5 bg-[#ed3039] border-[3px] border-white rounded-full shadow-md"></div>
+        <div class="w-5 h-5 bg-flag-red border-[3px] border-white rounded-full shadow-md"></div>
       `,
       iconSize: SITE_MARKER_CONFIG.ICON_SIZE,
       iconAnchor: SITE_MARKER_CONFIG.ICON_ANCHOR,

@@ -45,7 +45,7 @@ export function SitesTableMobile({ sites }: SitesTableMobileProps) {
     if (sortField !== field) {
       return <span className={`${t.icon.default} ml-1`}>↕</span>;
     }
-    return <span className="text-[#009639] ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>;
+    return <span className="text-brand ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>;
   };
 
   return (
@@ -270,7 +270,7 @@ export function SitesTableMobile({ sites }: SitesTableMobileProps) {
                             href={source.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#009639] hover:underline"
+                            className="text-brand hover:underline"
                           >
                             {source.title}
                           </a>

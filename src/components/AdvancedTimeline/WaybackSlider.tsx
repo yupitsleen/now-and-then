@@ -246,7 +246,7 @@ export function WaybackSlider({
         <p className={`truncate text-sm font-semibold leading-tight ${t.text.heading}`}>
           Timeline of available satellite imagery
         </p>
-        <p className="text-xs font-medium text-[#009639] leading-tight">
+        <p className="text-xs font-medium text-brand leading-tight">
           {dualMode
             ? "Drag either handle to set the before and after imagery dates"
             : "Drag the handle to change the imagery date shown on the map"}

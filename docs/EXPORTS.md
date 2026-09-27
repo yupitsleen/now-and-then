@@ -251,9 +251,9 @@ export function Button({ children, ...props }: ButtonProps) {
   return <button {...props}>{children}</button>;
 }
 
-// src/pages/DashboardPage.tsx
-export function DashboardPage() {
-  return <div>Dashboard</div>;
+// src/pages/Timeline.tsx
+export function Timeline() {
+  return <div>Timeline</div>;
 }
 ```
 
