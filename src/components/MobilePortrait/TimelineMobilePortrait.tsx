@@ -74,7 +74,7 @@ export function TimelineMobilePortrait({
           onSiteClick={(site) => onSiteHighlight(site.id)}
           onSiteHighlight={onSiteHighlight}
           highlightedSiteId={highlightedSiteId}
-          visibleColumns={["status"]}
+          visibleColumns={["type", "name", "status"]}
           nameClickOnlyWhenHighlighted
         />
       </div>
