@@ -28,6 +28,8 @@ import { calculateBeforeDate, findClosestReleaseIndex } from "../utils/intervalC
 import { BREAKPOINTS, CONTENT_GAP_PX, Z_INDEX } from "../constants/layout";
 import { useActiveFilters } from "../hooks/useActiveFilters";
 import { PalestinianFlagTriangle } from "../components/Decorative";
+import { useMediaQuery } from "../hooks/useMediaQuery";
+import { TimelineMobilePortrait } from "../components/MobilePortrait/TimelineMobilePortrait";
 
 const SiteDetailView = lazy(() =>
   import("../components/Map/SiteDetailView").then((m) => ({ default: m.SiteDetailView }))
@@ -94,6 +96,11 @@ export function Timeline() {
   // Sync Map toggle - when enabled, clicking timeline dots syncs map to nearest Wayback release
   // Default OFF so the initial Wayback scrubber positions survive the first dot click
   const [syncMapOnDotClick, setSyncMapOnDotClick] = useState(false);
+
+  // Portrait phones get a dedicated map-first layout (see spec 2026-09-27).
+  const isPortraitPhone = useMediaQuery("(orientation: portrait) and (max-width: 767px)");
+  // Sync + zoom are always on for the portrait path so stepping a site repositions the maps.
+  const syncActive = isPortraitPhone || syncMapOnDotClick;
 
   // Comparison Mode toggle - when enabled, shows two maps side-by-side
   // Default to ON for first-load comparison view
@@ -276,7 +283,7 @@ export function Timeline() {
    * Manual mode never runs this: the user's dates stay put.
    */
   useEffect(() => {
-    if (!syncMapOnDotClick || !highlightedSiteId || releases.length === 0) return;
+    if (!syncActive || !highlightedSiteId || releases.length === 0) return;
 
     const site = mockSites.find((s: Site) => s.id === highlightedSiteId);
     if (!site?.dateDestroyed) return;
@@ -293,7 +300,7 @@ export function Timeline() {
       setBeforeReleaseIndex(findClosestReleaseIndex(releases, beforeDate));
     }
   }, [
-    syncMapOnDotClick,
+    syncActive,
     highlightedSiteId,
     comparisonModeEnabled,
     comparisonInterval,
@@ -308,6 +315,13 @@ export function Timeline() {
       handleSiteHighlight(initialSiteIdFromUrl.current);
     }
   }, [releases, handleSiteHighlight]);
+
+  // Portrait: start on the first site so the stacked maps show real imagery.
+  useEffect(() => {
+    if (isPortraitPhone && !highlightedSiteId && filteredSites.length > 0) {
+      handleSiteHighlight(filteredSites[0].id);
+    }
+  }, [isPortraitPhone, highlightedSiteId, filteredSites, handleSiteHighlight]);
 
   /**
    * Reset wayback sliders to the same positions they load with
@@ -327,6 +341,56 @@ export function Timeline() {
   const handleRetryClick = useCallback(() => {
     window.location.reload();
   }, []);
+
+  const loadingEl = isLoading ? (
+    <div className={`flex-1 flex items-center justify-center rounded ${t.border.primary2} ${t.containerBg.semiTransparent} shadow-xl`}>
+      <div className="text-center">
+        <div className={`text-xl mb-2 ${t.text.heading}`}>Loading Wayback Archive...</div>
+        <div className={`text-sm ${t.text.muted}`}>Fetching historical imagery versions...</div>
+      </div>
+    </div>
+  ) : null;
+
+  const errorEl = error ? (
+    <div className={`flex-1 flex items-center justify-center rounded ${t.border.primary2} ${t.containerBg.semiTransparent} shadow-xl`}>
+      <div className="text-center">
+        <div className="text-xl font-bold mb-2 text-red-600">Error Loading Archive</div>
+        <div className={`text-sm mb-4 ${t.text.muted}`}>{error}</div>
+        <Button onClick={handleRetryClick} variant="primary" size="sm">Retry</Button>
+      </div>
+    </div>
+  ) : null;
+
+  if (isPortraitPhone) {
+    return (
+      <div
+        data-theme={isDark ? "dark" : "light"}
+        className={`min-h-[100dvh] transition-colors duration-200 ${t.layout.appBackground}`}
+      >
+        {loadingEl}
+        {errorEl}
+        {!isLoading && !error && releases.length > 0 && (
+          <AnimationProvider sites={filteredSites}>
+            <TimelineMobilePortrait
+              sites={filteredSites}
+              highlightedSiteId={highlightedSiteId}
+              onSiteHighlight={handleSiteHighlight}
+              before={{
+                tileUrl: beforeRelease?.tileUrl || "",
+                maxZoom: beforeRelease?.maxZoom || 19,
+                dateLabel: beforeRelease?.releaseDate,
+              }}
+              after={{
+                tileUrl: currentRelease?.tileUrl || "",
+                maxZoom: currentRelease?.maxZoom || 19,
+                dateLabel: currentRelease?.releaseDate,
+              }}
+            />
+          </AnimationProvider>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div
