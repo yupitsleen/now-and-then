@@ -98,9 +98,11 @@ export function Timeline() {
   const [syncMapOnDotClick, setSyncMapOnDotClick] = useState(false);
 
   // Portrait phones get a dedicated map-first layout (see spec 2026-09-27).
+  // Note: portrait does NOT force imagery sync — the maps keep the same default
+  // before/after dates as the other views (baseline vs. latest). Stepping a site
+  // only pans/zooms the maps to it (via the forced zoomToSite in the portrait
+  // layout), it does not re-date the imagery.
   const isPortraitPhone = useMediaQuery("(orientation: portrait) and (max-width: 767px)");
-  // Sync + zoom are always on for the portrait path so stepping a site repositions the maps.
-  const syncActive = isPortraitPhone || syncMapOnDotClick;
 
   // Comparison Mode toggle - when enabled, shows two maps side-by-side
   // Default to ON for first-load comparison view
@@ -283,7 +285,7 @@ export function Timeline() {
    * Manual mode never runs this: the user's dates stay put.
    */
   useEffect(() => {
-    if (!syncActive || !highlightedSiteId || releases.length === 0) return;
+    if (!syncMapOnDotClick || !highlightedSiteId || releases.length === 0) return;
 
     const site = mockSites.find((s: Site) => s.id === highlightedSiteId);
     if (!site?.dateDestroyed) return;
@@ -300,7 +302,7 @@ export function Timeline() {
       setBeforeReleaseIndex(findClosestReleaseIndex(releases, beforeDate));
     }
   }, [
-    syncActive,
+    syncMapOnDotClick,
     highlightedSiteId,
     comparisonModeEnabled,
     comparisonInterval,
