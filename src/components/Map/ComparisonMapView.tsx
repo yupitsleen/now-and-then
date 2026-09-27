@@ -76,13 +76,13 @@ export function ComparisonMapView({
           style={{ borderColor: COLORS.COMPARE_BEFORE }}
         >
           {/* Date picker button - top right, clear of Leaflet's top-left zoom control */}
-          {!stacked && before.dateLabel && (
+          {before.dateLabel && (
             <div className="absolute top-2 right-2 z-[1000]">
               <DateLabel
                 date={before.dateLabel}
                 variant="before"
                 size="md"
-                onDateChange={onBeforeDateChange}
+                onDateChange={stacked ? undefined : onBeforeDateChange}
               />
             </div>
           )}
@@ -111,13 +111,13 @@ export function ComparisonMapView({
           style={{ borderColor: COLORS.COMPARE_AFTER }}
         >
           {/* Date picker button - top right, clear of Leaflet's top-left zoom control */}
-          {!stacked && after.dateLabel && (
+          {after.dateLabel && (
             <div className="absolute top-2 right-2 z-[1000]">
               <DateLabel
                 date={after.dateLabel}
                 variant="after"
                 size="md"
-                onDateChange={onAfterDateChange}
+                onDateChange={stacked ? undefined : onAfterDateChange}
               />
             </div>
           )}
