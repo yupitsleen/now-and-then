@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import type { Site } from "../../types";
 import type { WaybackImagery } from "../../types/waybackTimelineTypes";
 import { useThemeClasses } from "../../hooks/useThemeClasses";
 import { useTranslation } from "../../contexts/LocaleContext";
+import { getEffectiveDestructionDate } from "../../utils/format";
 import { ComparisonMapView } from "../Map/ComparisonMapView";
 import { SitesTable } from "../SitesTable";
 import { SiteStepper } from "./SiteStepper";
@@ -39,6 +41,25 @@ export function TimelineMobilePortrait({
   const t = useThemeClasses();
   const translate = useTranslation();
 
+  // Order sites by effective destruction date (ascending) — mirrors the table's
+  // default sort: useTableSort compares the getEffectiveDestructionDate strings
+  // (ISO dates sort chronologically as text) with nulls last. Matching it here
+  // makes Prev/Next walk straight down the visible rows instead of jumping.
+  const orderedSites = useMemo(() => {
+    return [...sites].sort((a, b) => {
+      const av = getEffectiveDestructionDate(a);
+      const bv = getEffectiveDestructionDate(b);
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      const as = av.toLowerCase();
+      const bs = bv.toLowerCase();
+      if (as < bs) return -1;
+      if (as > bs) return 1;
+      return 0;
+    });
+  }, [sites]);
+
   return (
     <div className="min-h-[100dvh] flex flex-col">
       {/* Maps fill the first screen minus the stepper bar (~56px) */}
@@ -57,7 +78,7 @@ export function TimelineMobilePortrait({
 
       {/* Seam bar: at the screen bottom on load, at the top of the list once scrolled */}
       <SiteStepper
-        sites={sites}
+        sites={orderedSites}
         highlightedSiteId={highlightedSiteId}
         onSelect={onSiteHighlight}
       />
@@ -70,12 +91,13 @@ export function TimelineMobilePortrait({
       >
         <SitesTable
           embedded
-          sites={sites}
+          sites={orderedSites}
           onSiteClick={(site) => onSiteHighlight(site.id)}
           onSiteHighlight={onSiteHighlight}
           highlightedSiteId={highlightedSiteId}
           visibleColumns={["type", "name", "status"]}
           nameClickOnlyWhenHighlighted
+          autoScrollHighlighted={false}
         />
       </div>
 

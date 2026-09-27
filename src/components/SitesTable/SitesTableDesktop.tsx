@@ -31,6 +31,7 @@ interface SitesTableDesktopProps {
   clickableRow?: boolean; // If true, entire row opens site detail (for Data page)
   nameClickOnlyWhenHighlighted?: boolean;
   embedded?: boolean; // Drop the panel chrome (border/background/title) - host provides it
+  autoScrollHighlighted?: boolean; // Scroll the highlighted row into view (default true; portrait opts out)
 }
 
 /**
@@ -64,6 +65,7 @@ export function SitesTableDesktop({
   clickableRow = false,
   nameClickOnlyWhenHighlighted = false,
   embedded = false,
+  autoScrollHighlighted = true,
 }: SitesTableDesktopProps) {
   const { isDark } = useTheme();
   const t = useThemeClasses();
@@ -78,7 +80,10 @@ export function SitesTableDesktop({
   const { sortField, sortDirection, handleSort, sortedSites } = useTableSort<Site>(sites, "dateDestroyed", "asc");
 
   // Scroll to highlighted row
-  const { tableContainerRef, highlightedRowRef } = useTableScroll(highlightedSiteId);
+  const { tableContainerRef, highlightedRowRef } = useTableScroll(
+    highlightedSiteId,
+    autoScrollHighlighted
+  );
 
   // Export functionality
   const { selectedExportFormat, setSelectedExportFormat, exportConfigs, handleExport } =
