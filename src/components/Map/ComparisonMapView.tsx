@@ -35,6 +35,12 @@ interface ComparisonMapViewProps {
   onAfterDateChange?: (date: string) => void;
   /** Stack the two maps vertically (portrait phones) instead of side-by-side */
   stacked?: boolean;
+  /**
+   * Hide per-map settings overlays and the editable date picker, showing a
+   * read-only year label instead — without changing the row/column layout.
+   * `stacked` implies this too; landscape phones want it without stacking.
+   */
+  compact?: boolean;
 }
 
 /**
@@ -65,7 +71,9 @@ export function ComparisonMapView({
   onBeforeDateChange,
   onAfterDateChange,
   stacked = false,
+  compact = false,
 }: ComparisonMapViewProps) {
+  const chrome = stacked || compact;
   return (
     <div className="relative h-full">
       {/* Side-by-side map layout with gap-2 to match Dashboard */}
@@ -82,8 +90,8 @@ export function ComparisonMapView({
                 date={before.dateLabel}
                 variant="before"
                 size="md"
-                onDateChange={stacked ? undefined : onBeforeDateChange}
-                yearOnly={stacked}
+                onDateChange={chrome ? undefined : onBeforeDateChange}
+                yearOnly={chrome}
               />
             </div>
           )}
@@ -98,7 +106,7 @@ export function ComparisonMapView({
             onZoomToSiteChange={beforeMapSettings?.onZoomToSiteChange}
             mapMarkersOverride={beforeMapSettings?.showMarkers}
             onMapMarkersChange={beforeMapSettings?.onShowMarkersChange}
-            stacked={stacked}
+            stacked={chrome}
           />
           {beforeControls && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000]">
@@ -119,8 +127,8 @@ export function ComparisonMapView({
                 date={after.dateLabel}
                 variant="after"
                 size="md"
-                onDateChange={stacked ? undefined : onAfterDateChange}
-                yearOnly={stacked}
+                onDateChange={chrome ? undefined : onAfterDateChange}
+                yearOnly={chrome}
               />
             </div>
           )}
@@ -135,7 +143,7 @@ export function ComparisonMapView({
             onZoomToSiteChange={afterMapSettings?.onZoomToSiteChange}
             mapMarkersOverride={afterMapSettings?.showMarkers}
             onMapMarkersChange={afterMapSettings?.onShowMarkersChange}
-            stacked={stacked}
+            stacked={chrome}
           />
           {afterControls && (
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000]">

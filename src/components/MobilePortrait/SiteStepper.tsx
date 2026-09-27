@@ -23,13 +23,20 @@ interface SiteStepperProps {
   sites: Site[];
   highlightedSiteId: string | null;
   onSelect: (siteId: string | null) => void;
+  /** "horizontal" (default, portrait bar) or "vertical" (landscape side rail) */
+  orientation?: "horizontal" | "vertical";
 }
 
 /**
- * Prev/Next bar for portrait phones — steps the highlighted site through the
- * filtered list. Sits at the seam between the stacked maps and the sites list.
+ * Prev/Next control that steps the highlighted site through the filtered
+ * list. Horizontal: portrait's seam bar. Vertical: landscape's side rail.
  */
-export function SiteStepper({ sites, highlightedSiteId, onSelect }: SiteStepperProps) {
+export function SiteStepper({
+  sites,
+  highlightedSiteId,
+  onSelect,
+  orientation = "horizontal",
+}: SiteStepperProps) {
   const t = useThemeClasses();
   const translate = useTranslation();
 
@@ -40,8 +47,13 @@ export function SiteStepper({ sites, highlightedSiteId, onSelect }: SiteStepperP
   const btn =
     "flex-1 px-4 py-2 text-sm font-bold rounded text-white disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:outline-none";
 
+  const containerClass =
+    orientation === "vertical"
+      ? `flex flex-col gap-2 p-2 h-full ${t.containerBg.semiTransparent}`
+      : `flex items-center gap-2 px-3 py-2 ${t.containerBg.semiTransparent}`;
+
   return (
-    <div className={`flex items-center gap-2 px-3 py-2 ${t.containerBg.semiTransparent}`}>
+    <div className={containerClass}>
       <button
         type="button"
         className={btn}

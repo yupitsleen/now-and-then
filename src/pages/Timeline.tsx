@@ -30,6 +30,7 @@ import { useActiveFilters } from "../hooks/useActiveFilters";
 import { PalestinianFlagTriangle } from "../components/Decorative";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { TimelineMobilePortrait } from "../components/MobilePortrait/TimelineMobilePortrait";
+import { TimelineMobileLandscape } from "../components/MobilePortrait/TimelineMobileLandscape";
 
 const SiteDetailView = lazy(() =>
   import("../components/Map/SiteDetailView").then((m) => ({ default: m.SiteDetailView }))
@@ -103,6 +104,10 @@ export function Timeline() {
   // only pans/zooms the maps to it (via the forced zoomToSite in the portrait
   // layout), it does not re-date the imagery.
   const isPortraitPhone = useMediaQuery("(orientation: portrait) and (max-width: 767px)");
+
+  // Landscape phones keep desktop's side-by-side maps but have very little
+  // vertical room (~375-428px) — same map-first treatment, no map stacking.
+  const isLandscapePhone = useMediaQuery("(orientation: landscape) and (max-height: 500px)");
 
   // Comparison Mode toggle - when enabled, shows two maps side-by-side
   // Default to ON for first-load comparison view
@@ -356,6 +361,57 @@ export function Timeline() {
     </div>
   ) : null;
 
+  if (isLandscapePhone) {
+    return (
+      <div
+        data-theme={isDark ? "dark" : "light"}
+        className={`min-h-[100dvh] transition-colors duration-200 ${t.layout.appBackground}`}
+      >
+        {loadingEl}
+        {errorEl}
+        {!isLoading && !error && releases.length > 0 && (
+          <AnimationProvider sites={filteredSites}>
+            <TimelineMobileLandscape
+              sites={filteredSites}
+              highlightedSiteId={highlightedSiteId}
+              onSiteHighlight={handleSiteHighlight}
+              onSiteClick={setSelectedSite}
+              before={{
+                tileUrl: beforeRelease?.tileUrl || "",
+                maxZoom: beforeRelease?.maxZoom || 19,
+                dateLabel: beforeRelease?.releaseDate,
+              }}
+              after={{
+                tileUrl: currentRelease?.tileUrl || "",
+                maxZoom: currentRelease?.maxZoom || 19,
+                dateLabel: currentRelease?.releaseDate,
+              }}
+            />
+          </AnimationProvider>
+        )}
+
+        {/* Site Detail Modal */}
+        <Modal
+          isOpen={selectedSite !== null}
+          onClose={() => setSelectedSite(null)}
+          zIndex={Z_INDEX.MODAL}
+        >
+          {selectedSite && (
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center p-8">
+                  <div className={`text-lg ${t.text.muted}`}>Loading site details...</div>
+                </div>
+              }
+            >
+              <SiteDetailPanel site={selectedSite} />
+            </Suspense>
+          )}
+        </Modal>
+      </div>
+    );
+  }
+
   if (isPortraitPhone) {
     return (
       <div
@@ -370,6 +426,7 @@ export function Timeline() {
               sites={filteredSites}
               highlightedSiteId={highlightedSiteId}
               onSiteHighlight={handleSiteHighlight}
+              onSiteClick={setSelectedSite}
               before={{
                 tileUrl: beforeRelease?.tileUrl || "",
                 maxZoom: beforeRelease?.maxZoom || 19,
@@ -383,6 +440,25 @@ export function Timeline() {
             />
           </AnimationProvider>
         )}
+
+        {/* Site Detail Modal */}
+        <Modal
+          isOpen={selectedSite !== null}
+          onClose={() => setSelectedSite(null)}
+          zIndex={Z_INDEX.MODAL}
+        >
+          {selectedSite && (
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center p-8">
+                  <div className={`text-lg ${t.text.muted}`}>Loading site details...</div>
+                </div>
+              }
+            >
+              <SiteDetailPanel site={selectedSite} />
+            </Suspense>
+          )}
+        </Modal>
       </div>
     );
   }

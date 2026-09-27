@@ -217,10 +217,16 @@ export function WaybackSlider({
     );
   }
 
-  // Hover date bubble, shared by the release ticks and the scrubbers.
+  // Hover date bubble for the release ticks.
   const hoverTooltipClass = `hidden group-hover:block absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap pointer-events-none ${
     isDark ? "bg-gray-800 text-white" : "bg-gray-700 text-white"
   } shadow-md z-10`;
+
+  // Always-visible date bubble for the scrubbers, colored to match. Red
+  // (after) sits above the line and green (before) below it so the two
+  // don't overlap when they're close together.
+  const scrubberTooltipClass = (side: "top" | "bottom") =>
+    `absolute ${side === "top" ? "bottom-full mb-1" : "top-full mt-1"} left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap pointer-events-none text-white shadow-md z-10`;
 
   return (
     // flex/justify-center: the panel is sized by the sites timeline, so the
@@ -297,7 +303,7 @@ export function WaybackSlider({
         {/* Interactive timeline bar */}
         <div
           ref={timelineRef}
-          className="relative h-3 cursor-pointer"
+          className="relative z-10 h-3 cursor-pointer"
           onClick={handleTimelineClick}
           role="slider"
           aria-label="Wayback imagery timeline scrubber"
@@ -346,10 +352,15 @@ export function WaybackSlider({
           {/* Before position scrubber indicator - only in comparison mode */}
           {comparisonMode && beforeRelease && (
             <div
-              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 group"
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
               style={{ left: `${beforePositionPercent}%` }}
             >
-              <div className={hoverTooltipClass}>{beforeRelease.releaseDate}</div>
+              <div
+                className={scrubberTooltipClass("bottom")}
+                style={{ backgroundColor: COLORS.COMPARE_BEFORE }}
+              >
+                {beforeRelease.releaseDate}
+              </div>
               <div
                 data-testid="wayback-before-scrubber"
                 className="w-3 h-3 border-2 rounded-full shadow-md"
@@ -360,10 +371,13 @@ export function WaybackSlider({
 
           {/* Current position scrubber indicator */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 group"
+            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
             style={{ left: `${currentPositionPercent}%` }}
           >
-            <div className={hoverTooltipClass}>
+            <div
+              className={scrubberTooltipClass("top")}
+              style={{ backgroundColor: COLORS.COMPARE_AFTER }}
+            >
               {currentRelease?.releaseDate || translate("timeline.unknownDate")}
             </div>
             <div
@@ -374,19 +388,34 @@ export function WaybackSlider({
           </div>
         </div>
 
-        {/* Year labels - below the track */}
-        <div className="relative h-3">
+        {/* Year labels - below the track. Green up to and including the
+            before scrubber's year, red beyond it, and given a solid backing
+            pill (not just colored text) so they stay legible over both
+            light and dark card backgrounds. */}
+        <div className="relative h-5">
           {/* Centered in its year band, which sits inside the track — so no
               edge-overflow special cases for the first and last labels. */}
-          {yearMarkers.map(({ year, position }) => (
-            <div
-              key={year}
-              className="absolute -translate-x-1/2"
-              style={{ left: `${position}%` }}
-            >
-              <span className={`text-[9px] font-semibold ${t.text.body}`}>{year}</span>
-            </div>
-          ))}
+          {yearMarkers.map(({ year, position }) => {
+            const beforeYear = beforeRelease ? new Date(beforeRelease.releaseDate).getFullYear() : null;
+            const color =
+              comparisonMode && beforeYear !== null && year <= beforeYear
+                ? COLORS.COMPARE_BEFORE
+                : COLORS.COMPARE_AFTER;
+            return (
+              <div
+                key={year}
+                className="absolute -translate-x-1/2"
+                style={{ left: `${position}%` }}
+              >
+                <span
+                  className="px-1 rounded text-[9px] font-semibold"
+                  style={{ color, backgroundColor: isDark ? "#000" : "#fff" }}
+                >
+                  {year}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
       </div>

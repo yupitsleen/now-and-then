@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { Site } from "../../types";
 import type { WaybackImagery } from "../../types/waybackTimelineTypes";
-import { getEffectiveDestructionDate } from "../../utils/format";
+import { sortByEffectiveDestructionDate } from "../../utils/format";
 import { ComparisonMapView } from "../Map/ComparisonMapView";
 import { SitesTable } from "../SitesTable";
 import { SiteStepper } from "./SiteStepper";
@@ -11,6 +11,7 @@ interface TimelineMobilePortraitProps {
   sites: Site[];
   highlightedSiteId: string | null;
   onSiteHighlight: (siteId: string | null) => void;
+  onSiteClick: (site: Site) => void;
   before: WaybackImagery;
   after: WaybackImagery;
 }
@@ -34,27 +35,11 @@ export function TimelineMobilePortrait({
   sites,
   highlightedSiteId,
   onSiteHighlight,
+  onSiteClick,
   before,
   after,
 }: TimelineMobilePortraitProps) {
-  // Order sites by effective destruction date (ascending) — mirrors the table's
-  // default sort: useTableSort compares the getEffectiveDestructionDate strings
-  // (ISO dates sort chronologically as text) with nulls last. Matching it here
-  // makes Prev/Next walk straight down the visible rows instead of jumping.
-  const orderedSites = useMemo(() => {
-    return [...sites].sort((a, b) => {
-      const av = getEffectiveDestructionDate(a);
-      const bv = getEffectiveDestructionDate(b);
-      if (av == null && bv == null) return 0;
-      if (av == null) return 1;
-      if (bv == null) return -1;
-      const as = av.toLowerCase();
-      const bs = bv.toLowerCase();
-      if (as < bs) return -1;
-      if (as > bs) return 1;
-      return 0;
-    });
-  }, [sites]);
+  const orderedSites = useMemo(() => sortByEffectiveDestructionDate(sites), [sites]);
 
   const highlightedSite = sites.find((site) => site.id === highlightedSiteId) ?? null;
 
@@ -84,6 +69,8 @@ export function TimelineMobilePortrait({
             embedded
             sites={[highlightedSite]}
             onSiteHighlight={onSiteHighlight}
+            onSiteClick={onSiteClick}
+            clickableRow
             highlightedSiteId={highlightedSiteId}
             visibleColumns={["type", "name", "status"]}
             autoScrollHighlighted={false}
