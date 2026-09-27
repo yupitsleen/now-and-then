@@ -65,7 +65,7 @@ export function ComparisonMapView({
   onBeforeDateChange,
   onAfterDateChange,
   stacked = false,
-}: ComparisonMapViewProps) {
+}: ComparisonMapViewProps): JSX.Element {
   return (
     <div className="relative h-full">
       {/* Side-by-side map layout with gap-2 to match Dashboard */}
