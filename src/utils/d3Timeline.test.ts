@@ -5,6 +5,7 @@ import {
   DEFAULT_TIMELINE_CONFIG,
   withMarkDates,
   nearestPlaced,
+  axisTickCount,
   type TimelineEvent,
 } from "./d3Timeline";
 
@@ -268,6 +269,21 @@ describe("withMarkDates", () => {
     expect([...marks].sort((a, b) => a - b)).toEqual(marks);
     // The Nov 20 event still sorts after the rings placed earlier in the month.
     expect(order.indexOf("late")).toBeGreaterThan(order.indexOf("ring0"));
+  });
+});
+
+describe("axisTickCount", () => {
+  // Guards the fix for month labels colliding on a narrow chart: a wider chart
+  // asks for more labels, and the floor keeps a narrow one from degenerating to
+  // a single label that reads as a broken axis. (d3's snap to a nice month
+  // cadence is d3's job, not asserted here.)
+  it("asks for more labels as the chart widens", () => {
+    expect(axisTickCount(320)).toBeLessThan(axisTickCount(1100));
+  });
+
+  it("never asks for fewer than two", () => {
+    expect(axisTickCount(0)).toBe(2);
+    expect(axisTickCount(60)).toBe(2);
   });
 });
 

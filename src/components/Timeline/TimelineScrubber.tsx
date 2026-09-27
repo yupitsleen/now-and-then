@@ -429,7 +429,10 @@ export function TimelineScrubber({
             header. Controls (left) and InfoIcon (right) sit above it in the flex row;
             pointer-events-none keeps it from eating their clicks. */}
         <div className="min-w-0 flex-1" />
-        <div className="pointer-events-none absolute inset-x-0 mx-auto w-fit max-w-full px-2 text-center">
+        {/* Below xl the row is too narrow for a centered caption without it
+            overlapping the tabs/transport on the left — hide it there; the
+            InfoIcon tooltip still carries the explanation. */}
+        <div className="pointer-events-none absolute inset-x-0 mx-auto hidden w-fit max-w-full px-2 text-center xl:block">
           <p className={`truncate text-sm font-semibold leading-tight ${t.text.heading}`}>
             Timeline of destructive assaults on culturally significant sites
           </p>
