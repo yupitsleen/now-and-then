@@ -81,13 +81,14 @@ export const Modal = memo(function Modal({ isOpen, onClose, children, title, zIn
         ref={modalRef}
         tabIndex={-1}
         className={cn(
-          "relative z-10 w-full max-w-4xl max-h-[90vh] overflow-y-auto",
+          "relative z-10 w-full max-w-4xl max-h-[90vh] flex flex-col",
           "rounded-2xl shadow-2xl transform transition-all will-change-transform",
           t.card.base
         )}
         style={{ contain: 'layout style paint' }}
       >
-        {/* Close button - positioned at top right of content */}
+        {/* Close button - fixed at top right, outside the scrolling body so it
+            stays reachable while the user scrolls through modal content */}
         <button
           onClick={onClose}
           className={cn(
@@ -100,7 +101,7 @@ export const Modal = memo(function Modal({ isOpen, onClose, children, title, zIn
         </button>
 
         {/* Modal Body */}
-        <div className="px-4 py-4 sm:px-6">{children}</div>
+        <div className="overflow-y-auto px-4 py-4 sm:px-6">{children}</div>
       </div>
     </div>
   );

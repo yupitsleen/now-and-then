@@ -72,7 +72,7 @@ export function TimelineMobilePortrait({
             onSiteClick={onSiteClick}
             clickableRow
             highlightedSiteId={highlightedSiteId}
-            visibleColumns={["type", "name", "status"]}
+            visibleColumns={["type", "name", "dateDestroyed"]}
             autoScrollHighlighted={false}
             hideHeader
           />
