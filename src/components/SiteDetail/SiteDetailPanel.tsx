@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Site } from "../../types";
 import { StatusBadge } from "../StatusBadge";
 import { formatLabel, translateSiteType, translateStatus } from "../../utils/format";
@@ -22,6 +23,7 @@ interface SiteDetailPanelProps {
 export function SiteDetailPanel({ site, onViewOnMap }: SiteDetailPanelProps) {
   const t = useThemeClasses();
   const translate = useTranslation();
+  const [showVerifiedTooltip, setShowVerifiedTooltip] = useState(false);
 
   // Translate site type and status
   const siteTypeLabel = translateSiteType(translate, site.type);
@@ -37,7 +39,7 @@ export function SiteDetailPanel({ site, onViewOnMap }: SiteDetailPanelProps) {
         <StatusBadge status={site.status} className="inline-block" />
 
         {/* ponytail: read-only indicator, glyph instead of an icon component */}
-        <p className={`flex w-fit items-center gap-2 text-sm italic ${t.text.muted}`}>
+        <p className={`relative flex w-fit items-center gap-2 text-sm italic ${t.text.muted}`}>
           <span
             aria-hidden="true"
             className={site.verified ? "text-green-600" : "text-red-600"}
@@ -45,11 +47,22 @@ export function SiteDetailPanel({ site, onViewOnMap }: SiteDetailPanelProps) {
             {site.verified ? "✓" : "✗"}
           </span>
           {site.verified ? "Verified" : "Unverified"}
-          <InfoIcon
-            className="w-4 h-4"
-            title={VERIFIED_TOOLTIP}
+          <button
+            type="button"
+            onClick={() => setShowVerifiedTooltip((shown) => !shown)}
+            aria-expanded={showVerifiedTooltip}
             aria-label={VERIFIED_TOOLTIP}
-          />
+          >
+            <InfoIcon className="w-4 h-4" title={VERIFIED_TOOLTIP} />
+          </button>
+          {showVerifiedTooltip && (
+            <span
+              role="tooltip"
+              className={`absolute top-full left-0 z-10 mt-1 w-64 rounded-lg p-2 text-xs not-italic shadow-lg ${t.bg.primary} ${t.text.body} border ${t.border.default}`}
+            >
+              {VERIFIED_TOOLTIP}
+            </span>
+          )}
         </p>
 
         {/* Site Names */}

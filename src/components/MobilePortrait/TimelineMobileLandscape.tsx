@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import type { Site } from "../../types";
 import type { WaybackImagery } from "../../types/waybackTimelineTypes";
-import { sortByEffectiveDestructionDate } from "../../utils/format";
+import { formatDateStandard, sortByEffectiveDestructionDate } from "../../utils/format";
 import { ComparisonMapView } from "../Map/ComparisonMapView";
-import { StatusBadge } from "../StatusBadge";
 import { SiteStepper } from "./SiteStepper";
 import { useThemeClasses } from "../../hooks/useThemeClasses";
+import { useTranslation } from "../../contexts/LocaleContext";
 
 interface TimelineMobileLandscapeProps {
   sites: Site[];
@@ -41,6 +41,7 @@ export function TimelineMobileLandscape({
   after,
 }: TimelineMobileLandscapeProps) {
   const t = useThemeClasses();
+  const translate = useTranslation();
   const orderedSites = useMemo(() => sortByEffectiveDestructionDate(sites), [sites]);
   const highlightedSite = sites.find((site) => site.id === highlightedSiteId) ?? null;
 
@@ -71,7 +72,11 @@ export function TimelineMobileLandscape({
               <span className={`text-xs font-semibold leading-tight ${t.text.heading}`}>
                 {highlightedSite.name}
               </span>
-              <StatusBadge status={highlightedSite.status} className="rounded text-xs px-2 py-1" />
+              <span className={`text-xs ${t.text.subheading}`}>
+                {highlightedSite.dateDestroyed
+                  ? formatDateStandard(highlightedSite.dateDestroyed)
+                  : translate("common.unknown")}
+              </span>
             </>
           )}
         </button>
